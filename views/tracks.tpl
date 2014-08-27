@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
+    <link rel="stylesheet" href="css/tinycolorpicker.css" type="text/css" media="screen"/>
 </head>
 <body>
 
@@ -13,6 +14,14 @@
     <input type='text' id='todate' value='2014-08-20' />
 
     <div id='datep'></div>
+
+	<div id="colorPicker1">
+                    <a class="color"><div class="colorInner"></div></a>
+                    <div class="track"></div>
+                    <ul class="dropdown"><li></li></ul>
+                    <input type="hidden" class="colorInput"/>
+        </div>
+
 
     <a href='#' id='getmap'>click</a>
 
@@ -23,11 +32,13 @@
     <script src="js/leaflet.js"></script>
     <script type="text/javascript" charset="utf8" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/datepicker.js"></script>
+    <script type="text/javascript" src="js/jquery.tinycolorpicker.min.js"></script>
 
     <script type="text/javascript">
 
     	var map;
 	var geojson;
+	var line_color = 'red';
 
     	var lat = 50.109544;
 	var lon = 8.694585;
@@ -105,7 +116,7 @@
 				route = data;
 
 				var myStyle = {
-				    "color": "red",
+				    "color": line_color,
 				    "weight": 5,
 				    "opacity": 0.65
 			        };
@@ -135,6 +146,12 @@
 
 	$(document).ready(function() {
 
+
+		$("#colorPicker1").tinycolorpicker();
+		$("#colorPicker1").bind("change", function() {
+			line_color = $(".colorInput").val();
+		});
+
 		$('#getmap').on('click', function (e) {
 			e.preventDefault();
 			getGeoJSON();
@@ -159,6 +176,7 @@
 			$('#todate').val( $('#datep').DatePickerGetDate(true)[1] );
 
 		});
+
 
         });
 	
