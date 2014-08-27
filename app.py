@@ -79,6 +79,11 @@ def get_geoJSON():
     from_date = data.get('fromdate')
     to_date = data.get('todate')
 
+    if from_date == to_date:
+        to_date = "%s 23:59:59" % to_date
+
+    print "FROM=%s, TO=%s" % (from_date, to_date)
+
     geo = {
             'properties' : {
                     # https://github.com/mapbox/simplestyle-spec/tree/master/1.1.0
