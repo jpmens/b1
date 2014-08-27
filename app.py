@@ -80,16 +80,15 @@ def get_geoJSON():
     to_date = data.get('todate')
 
     geo = {
-            'type' : 'Feature',
-            'geometry' : {
-                    'type' : 'LineString',
-                    'coordinates' : []
-                  },
             'properties' : {
                     # https://github.com/mapbox/simplestyle-spec/tree/master/1.1.0
                     'title' : 'OwnTracks',
                     'description' : "an OwnTracks track",
-                    "stroke": "#555555",
+                  },
+            'type' : 'Feature',
+            'geometry' : {
+                    'type' : 'LineString',
+                    'coordinates' : []
                   },
     }
     coords = []

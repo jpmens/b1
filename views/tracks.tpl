@@ -4,7 +4,6 @@
     <title>Simple Leaflet Map</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/leaflet.css" />
-    <link rel="stylesheet" href="css/geoline.css" />
     <link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
 </head>
 <body>
@@ -16,6 +15,8 @@
     <div id='datep'></div>
 
     <a href='#' id='getmap'>click</a>
+
+    <!-- <a href='#' id='nextdate'>Next</a> -->
 
     <div id="map" style="width: 600px; height: 400px"></div>
 
@@ -103,10 +104,18 @@
 				console.log(JSON.stringify(data));
 				route = data;
 
+				var myStyle = {
+				    "color": "red",
+				    "weight": 5,
+				    "opacity": 0.65
+			        };
+
+
 				if (geojson) {
 					map.removeLayer(geojson);
 				}
 				geojson = L.geoJson(route, {
+					style: myStyle,
 					// onEachFeature: onEachFeature
 				}).addTo(map);
 
@@ -129,6 +138,26 @@
 		$('#getmap').on('click', function (e) {
 			e.preventDefault();
 			getGeoJSON();
+		});
+		$('#nextdate').on('click', function (e) {
+			e.preventDefault();
+
+			var d_from;
+			var d_to;
+
+
+			var d = $('#datep').DatePickerGetDate(false);
+			// console.log(d);
+			d_from = new Date(d[0]);
+			d_to   = new Date(d[1]);
+
+			d_from = d_from.setDate(d_from.getDate() + 1);
+			d_to   = d_to.setDate(d_to.getDate() + 1);
+
+			$('#datep').DatePickerSetDate(d_to, true);
+
+			$('#todate').val( $('#datep').DatePickerGetDate(true)[1] );
+
 		});
 
         });
