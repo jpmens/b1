@@ -10,20 +10,20 @@
 
 #colorPicker1 .track {
     background:     #EFEFEF url(../images/text-color.png) no-repeat 50% 50%;
-    height:         150px;
-    width:          150px;
+    height:         90px;
+    width:          90px;
     padding:        10px;
     position:       absolute;
     cursor:         crosshair;
     float:          left;
-    left:           -71px;
-    top:            -71px;
+    left:           -41px;
+    top:            -41px;
     display:        none;
     border:         1px solid #ccc;
     z-index:        10;
-    -webkit-border-radius: 150px;
-    -moz-border-radius: 150px;
-    border-radius: 150px;
+    -webkit-border-radius: 90px;
+    -moz-border-radius: 90px;
+    border-radius: 90px;
 
 }
 
@@ -78,25 +78,25 @@
 
 #colorPicker2 .track {
     background:     #EFEFEF url(../images/firefox.png) no-repeat 50% 50%;
-    height:         150px;
-    width:          150px;
+    height:         90px;
+    width:          90px;
     padding:        10px;
     position:       absolute;
     cursor:         crosshair;
     float:          left;
-    left:           75px;
-    top:            -71px;
+    left:           45px;
+    top:            -41px;
     display:        none;
     border:         1px solid #ccc;
     z-index:        10;
-    -webkit-border-radius: 150px;
-    -moz-border-radius: 150px;
-    border-radius: 150px;
+    -webkit-border-radius: 90px;
+    -moz-border-radius: 90px;
+    border-radius: 90px;
 
 }
 
 #colorPicker2 .color {
-    width:          75px;
+    width:          45px;
     height:         25px;
     line-height:    25px;
     text-decoration : none;
