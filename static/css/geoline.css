@@ -1,0 +1,26 @@
+<style type="text/css">
+.line:hover{
+  stroke:red;
+}
+.line2{
+  stroke:black;
+  stroke-width:4;
+  fill:red;
+}
+.line3{
+  stroke:purple;
+  stroke-width:6;
+  stroke-dasharray:8,12;
+}
+.line4{
+  stroke:black;
+  stroke-width:6;
+  stroke-dasharray:8,2;
+  fill:yellow;
+}
+.line5{
+  stroke:gold;
+  stroke-width:2;
+  fill:yellow;
+}
+</style>
