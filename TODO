@@ -1,0 +1,14 @@
+
+* add framework (python) for creating demo pubs, waypoints, etc.
+
+
+all pages:
+	height of page (scrollbar is visible)
+
+map:
+	config.js
+	CSS for height of map
+	remove code for loading geofences and geo-fences.json
+
+table:
+	config.js
