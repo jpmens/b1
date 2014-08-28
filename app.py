@@ -4,6 +4,7 @@ import bottle
 from bottle import response, template, static_file, request
 from dbschema import Location, fn
 import json
+from haversine import haversine
 try:
     from cStringIO import StringIO
 except:
@@ -94,8 +95,7 @@ def get_download():
 
     output = StringIO()
 
-    output.write("Hello world")
-    output.write("\nhow are you?")
+    output.write("%-10s %-10s %s\n" % ("Latitude", "Longitude", "Timestamp (UTC)"))
 
     query = Location.select().where(
                 (Location.username == username) &
@@ -106,9 +106,11 @@ def get_download():
     for l in query:
 
         dbid    = l.id
+        tst     = l.tst
         lat     = l.lat
         lon     = l.lon
 
+        output.write("%-10s %-10s %s\n" % (lat, lon, tst))
         # coords.append( [ lon, lat ] )
 
     content_type = 'application/binary'
@@ -129,30 +131,62 @@ def get_download():
 def get_geoJSON():
     data = json.load(bottle.request.body)
 
-    # needs error handling
+    # needs LOTS of error handling
 
     userdev = data.get('userdev')
     username, device = userdev.split('|')
     from_date = data.get('fromdate')
     to_date = data.get('todate')
 
+    last_point = [0, 0]
+
     if from_date == to_date:
         to_date = "%s 23:59:59" % to_date
 
     print "FROM=%s, TO=%s" % (from_date, to_date)
 
+    collection = {
+            'type' : 'FeatureCollection',
+            'features' : [],        # [ geo, <list of points> ]
+    }
+
+
     geo = {
-            'properties' : {
-                    # https://github.com/mapbox/simplestyle-spec/tree/master/1.1.0
-                    'title' : 'OwnTracks',
-                    'description' : "an OwnTracks track",
-                  },
             'type' : 'Feature',
             'geometry' : {
                     'type' : 'LineString',
                     'coordinates' : []
                   },
+            'properties' : {
+                    'description' : "an OwnTracks track",
+                  },
     }
+
+    point = {
+            'type'  : 'Feature',
+            'geometry' : {
+                'type'  : "Point",
+                'coordinates' : [8.5337604,  52.0270175],
+            },
+            'properties' : {
+                'description' : " JPM 999 ",
+            }
+    }
+    point2 = {
+            'type'  : 'Feature',
+            'geometry' : {
+                'type'  : "Point",
+                'coordinates' : [8.5331948, 52.0280072]
+            },
+            'properties' : {
+                'description' : " JPM 2 ",
+                # 'show_on_map' : true,
+            }
+    }
+
+    pointlist = [ point, point2 ]
+    pointlist = []
+
     coords = []
 
     query = Location.select().where(
@@ -164,15 +198,36 @@ def get_geoJSON():
     for l in query:
 
         dbid    = l.id
-        lat     = l.lat
-        lon     = l.lon
+        tst     = l.tst
+        lat     = float(l.lat)
+        lon     = float(l.lon)
 
         coords.append( [ lon, lat ] )
 
+
+        distance = haversine(lon, lat, last_point[0], last_point[1])
+        if distance > 2:
+            last_point = [lon, lat]
+            point = {
+                    'type'  : 'Feature',
+                    'geometry' : {
+                        'type'  : "Point",
+                        'coordinates' : [lon, lat],
+                    },
+                    'properties' : {
+                        'description' : str(tst),
+                    }
+            }
+            pointlist.append(point)
+
+
     geo['geometry']['coordinates'] = coords
 
-    return geo
-    # print json.dumps(geo)
+    collection['features'] = [ geo ]
+    for p in pointlist:
+        collection['features'].append(p)
+
+    return collection
 
 @app.route('/tracks')
 def tracks_index():

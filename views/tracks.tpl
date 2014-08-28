@@ -4,6 +4,7 @@
     <title>Simple Leaflet Map</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/leaflet.label.css" />
     <link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
     <link rel="stylesheet" href="css/tinycolorpicker.css" type="text/css" media="screen"/>
 </head>
@@ -32,6 +33,9 @@
     <div id="map" style="width: 600px; height: 400px"></div>
 
     <script src="js/leaflet.js"></script>
+    <!-- https://github.com/Leaflet/Leaflet.label -->
+    <script src="js/leaflet.label.js"></script>
+
     <script type="text/javascript" charset="utf8" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/datepicker.js"></script>
     <script type="text/javascript" src="js/jquery.tinycolorpicker.min.js"></script>
@@ -97,7 +101,7 @@
 
 	function onEachFeature(feature, layer) {
 		if (feature.properties) {
-			layer.bindPopup(feature.properties.name);
+			layer.bindPopup(feature.properties.description);
 		}
 	}
 
@@ -120,19 +124,33 @@
 				console.log(JSON.stringify(data));
 				route = data;
 
+                /* FIXME: need to get style from geoJSON maybe? This overrides
+                   default style for points, which makes it hard to see them */
+
 				var myStyle = {
 				    "color": line_color,
 				    "weight": 5,
 				    "opacity": 0.65
 			        };
 
+				var geojsonMarkerOptions = {
+				    radius: 6,
+				    fillColor: "#ffffff",
+				    color: "#000",
+				    weight: 1,
+				    opacity: 1,
+				    fillOpacity: 0.8
+				};
 
 				if (geojson) {
 					map.removeLayer(geojson);
 				}
 				geojson = L.geoJson(route, {
 					style: myStyle,
-					// onEachFeature: onEachFeature
+					pointToLayer: function(feature, latlng) {
+						return L.circleMarker(latlng, geojsonMarkerOptions);
+					},
+					onEachFeature: onEachFeature
 				}).addTo(map);
 
 				try {
