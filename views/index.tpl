@@ -1,3 +1,10 @@
-hola {{ name }} tienes {{ age }}
+% include('tbstop.tpl', page='index', page_title='Page AAAA')
 
-ref = {{ get_url('css', filename='xxx') }}
+
+	<h2>Index</h2>
+
+	<p>blurb</p>
+
+
+
+% include('tbsbot.tpl')

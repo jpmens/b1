@@ -67,9 +67,9 @@ def enable_cors():
 def index():
     return template('index', dict(name="JP M", age=69))
 
-@app.route('/b')
-def page_b():
-    return template('b', dict(name="JP M", age=69))
+@app.route('/tracks')
+def page_tracks():
+    return template('tracks', dict(name="JP M", age=69))
 
 @app.route('/hello')
 def hello():

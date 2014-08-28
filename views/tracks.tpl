@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Simple Leaflet Map</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="css/track.css" />
-    <link rel="stylesheet" href="css/leaflet.css" />
-    <link rel="stylesheet" href="css/leaflet.label.css" />
-    <link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
-    <link rel="stylesheet" href="css/tinycolorpicker.css" type="text/css" media="screen"/>
-</head>
-<body>
+% include('tbstop.tpl', page='tracks', page_title='Page AAAA')
+
+
+
+
 
   <div id='container'>
       <div id='navbar'>
@@ -58,17 +51,6 @@
     <div id='content'>
 	    <div id="map"></div>
     </div>
-
-    <script src="js/leaflet.js"></script>
-    <!-- https://github.com/Leaflet/Leaflet.label -->
-    <script src="js/leaflet.label.js"></script>
-
-    <script type="text/javascript" charset="utf8" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/datepicker.js"></script>
-    <script type="text/javascript" src="js/jquery.tinycolorpicker.min.js"></script>
-
-    <!-- http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/ -->
-    <script type="text/javascript" src="js/jquery.fileDownload.js"></script>
 
     <script type="text/javascript">
 
@@ -265,5 +247,6 @@
         });
 	
     </script>
-</body>
-</html>
+
+
+% include('tbsbot.tpl')
