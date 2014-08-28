@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
 import bottle
-from bottle import response, template, static_file
+from bottle import response, template, static_file, request
 from dbschema import Location, fn
 import json
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO
+import os
+
 
 app = application = bottle.Bottle()
 bottle.SimpleTemplate.defaults['get_url'] = app.get_url
@@ -67,6 +73,57 @@ def users():
         userlist.append(user)
 
     return dict(userlist=userlist)
+
+# ?userdev=alx%7Cy300&fromdate=2014-08-19&todate=2014-08-20&format=tx
+@app.route('/api/download', method='GET')
+def get_download():
+    mimetype = {
+        'txt':  'text/plain',
+    }
+
+    userdev = request.params.get('userdev')
+    from_date = request.params.get('fromdate')
+    to_date = request.params.get('todate')
+    fmt = request.params.get('format')
+
+    username, device = userdev.split('|')
+    trackname = 'owntracks-%s-%s-%s-%s' % (username, device, from_date, to_date)
+    
+    if from_date == to_date:
+        to_date = "%s 23:59:59" % to_date
+
+    output = StringIO()
+
+    output.write("Hello world")
+    output.write("\nhow are you?")
+
+    query = Location.select().where(
+                (Location.username == username) &
+                (Location.device == device) &
+                (Location.tst.between(from_date, to_date))
+                )
+    query = query.order_by(Location.tst.asc())
+    for l in query:
+
+        dbid    = l.id
+        lat     = l.lat
+        lon     = l.lon
+
+        # coords.append( [ lon, lat ] )
+
+    content_type = 'application/binary'
+    if fmt in mimetype:
+        content_type = mimetype[fmt]
+
+    output.seek(0, os.SEEK_END)
+    octets = output.tell()
+
+    response.content_type = content_type
+    response.headers['Content-Disposition'] = 'attachment; filename="%s"' % (trackname)
+    response.headers['Content-Length'] = str(octets)
+
+    return output.getvalue()
+
 
 @app.route('/api/getGeoJSON', method='POST')
 def get_geoJSON():

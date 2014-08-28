@@ -23,7 +23,9 @@
         </div>
 
 
-    <a href='#' id='getmap'>click</a>
+    <a href='#' id='getmap'>Show on map</a>
+    <a href='#' id='dn_txt'>txt</a>
+
 
     <!-- <a href='#' id='nextdate'>Next</a> -->
 
@@ -34,11 +36,14 @@
     <script type="text/javascript" src="js/datepicker.js"></script>
     <script type="text/javascript" src="js/jquery.tinycolorpicker.min.js"></script>
 
+    <!-- http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/ -->
+    <script type="text/javascript" src="js/jquery.fileDownload.js"></script>
+
     <script type="text/javascript">
 
     	var map;
 	var geojson;
-	var line_color = 'red';
+	var line_color = '#ff0000';
 
     	var lat = 50.109544;
 	var lon = 8.694585;
@@ -144,9 +149,29 @@
 		   });
 	}
 
+	function download(format) {
+		var params = {
+			userdev: $('#userdev').children(':selected').attr('id'),
+			fromdate: $('#fromdate').val(),
+			todate: $('#todate').val(),
+			format: format,
+		};
+
+		$.fileDownload('api/download', {
+			data: params,
+			successCallback: function(url) {
+				console.log("OK URL ", + url);
+			},
+			failCallback: function(html, url) {
+				console.log("ERROR " + url + " " + html);
+			}
+		});
+	}
+
 	$(document).ready(function() {
 
 
+		// FIXME: $("#colorPicker1").setColor(line_color);
 		$("#colorPicker1").tinycolorpicker();
 		$("#colorPicker1").bind("change", function() {
 			line_color = $(".colorInput").val();
@@ -156,6 +181,12 @@
 			e.preventDefault();
 			getGeoJSON();
 		});
+
+		$('#dn_txt').on('click', function (e) {
+			e.preventDefault();
+			download('txt');
+		});
+
 		$('#nextdate').on('click', function (e) {
 			e.preventDefault();
 
