@@ -71,6 +71,10 @@ def index():
 def page_about():
     return template('about', dict(name="JP M", age=69))
 
+@app.route('/console')
+def page_console():
+    return template('console', dict(name="JP M", age=69))
+
 @app.route('/map')
 def page_map():
     return template('map', dict(name="JP M", age=69))
@@ -282,10 +286,6 @@ def get_geoJSON():
         collection['features'].append(p)
 
     return collection
-
-@app.route('/tracks')
-def tracks_index():
-    return template('tracks', dict(name="JP M", age=69))
 
 @app.route('/<filename:re:.*\.js>')
 def javascripts(filename):

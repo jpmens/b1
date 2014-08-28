@@ -5,6 +5,11 @@
 all pages:
 	height of page (scrollbar is visible)
 
+console:
+	config.js: bring to other config.js' format and consolidate
+	add small timestamp, if possible
+	table-ize topic vs. payload
+
 map:
 	config.js
 	CSS for height of map
@@ -12,3 +17,7 @@ map:
 
 table:
 	config.js
+
+tracks:
+	homogenize maps (mapbox, vs. OSM, etc.) with map/
+	CSS, CSS, CSS, CSS!

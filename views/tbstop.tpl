@@ -63,11 +63,12 @@
             <li class="{{ "active" if page == "map" else "xxxx" }}" ><a href="map">Map</a></li>
             <li class="{{ "active" if page == "table" else "xxxx" }}" ><a href="table">Table</a></li>
             <li class="{{ "active" if page == "tracks" else "xxxx" }}" ><a href="tracks">Tracks</a></li>
+            <li class="{{ "active" if page == "console" else "xxxx" }}" ><a href="console">Console</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="../navbar/">Default</a></li>
-            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="../navbar-static-top/">Static top</a></li>
-            <li ><a href="./">Fixed top</a></li>
+            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="#">Default</a></li>
+            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="#">Static top</a></li>
+            <li ><a href="#">Fixed top</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
