@@ -14,6 +14,16 @@
     <input type='text' id='fromdate' value='2014-08-19' />
     <input type='text' id='todate' value='2014-08-20' />
 
+
+    Point every KM: 
+    <select id='spacing'>
+    	<option selected>2</option>
+    	<option>5</option>
+    	<option>10</option>
+    	<option>20</option>
+    	<option>40</option>
+    </select>
+
     <div id='datep'></div>
 
 	<div id="colorPicker1">
@@ -110,6 +120,7 @@
 			userdev: $('#userdev').children(':selected').attr('id'),
 			fromdate: $('#fromdate').val(),
 			todate: $('#todate').val(),
+			spacing: $('#spacing').val(),
 		};
 
 		// console.log(JSON.stringify(params));
@@ -121,7 +132,8 @@
 			data: JSON.stringify(params),
 			dataType: 'json',
 			success: function(data) {
-				console.log(JSON.stringify(data));
+				// console.log(JSON.stringify(data));
+
 				route = data;
 
                 /* FIXME: need to get style from geoJSON maybe? This overrides

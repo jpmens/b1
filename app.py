@@ -11,6 +11,7 @@ except:
     from StringIO import StringIO
 import os
 
+POINT_KM = 2
 
 app = application = bottle.Bottle()
 bottle.SimpleTemplate.defaults['get_url'] = app.get_url
@@ -137,8 +138,9 @@ def get_geoJSON():
     username, device = userdev.split('|')
     from_date = data.get('fromdate')
     to_date = data.get('todate')
+    spacing = int(data.get('spacing', POINT_KM))
 
-    last_point = [0, 0]
+    last_point = [None, None]
 
     if from_date == to_date:
         to_date = "%s 23:59:59" % to_date
@@ -162,32 +164,8 @@ def get_geoJSON():
                   },
     }
 
-    point = {
-            'type'  : 'Feature',
-            'geometry' : {
-                'type'  : "Point",
-                'coordinates' : [8.5337604,  52.0270175],
-            },
-            'properties' : {
-                'description' : " JPM 999 ",
-            }
-    }
-    point2 = {
-            'type'  : 'Feature',
-            'geometry' : {
-                'type'  : "Point",
-                'coordinates' : [8.5331948, 52.0280072]
-            },
-            'properties' : {
-                'description' : " JPM 2 ",
-                # 'show_on_map' : true,
-            }
-    }
-
-    pointlist = [ point, point2 ]
     pointlist = []
-
-    coords = []
+    track_coords = []
 
     query = Location.select().where(
                 (Location.username == username) &
@@ -202,11 +180,14 @@ def get_geoJSON():
         lat     = float(l.lat)
         lon     = float(l.lon)
 
-        coords.append( [ lon, lat ] )
+        track_coords.append( [ lon, lat ] )
 
 
-        distance = haversine(lon, lat, last_point[0], last_point[1])
-        if distance > 2:
+        distance = None
+        if last_point[0] is not None:
+            distance = haversine(lon, lat, last_point[0], last_point[1])
+
+        if last_point[0] is None or distance > spacing:
             last_point = [lon, lat]
             point = {
                     'type'  : 'Feature',
@@ -221,7 +202,7 @@ def get_geoJSON():
             pointlist.append(point)
 
 
-    geo['geometry']['coordinates'] = coords
+    geo['geometry']['coordinates'] = track_coords
 
     collection['features'] = [ geo ]
     for p in pointlist:
