@@ -1,4 +1,4 @@
-% include('tbstop.tpl', page='index', page_title='Page AAAA')
+% include('tbstop.tpl', page='index', page_title='OwnTracks Dashboard')
 
 
 	<h2>Index</h2>

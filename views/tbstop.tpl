@@ -59,20 +59,10 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="{{ "active" if page == "index" else "xxxx" }}" ><a href="/">Home</a></li>
-            <li class="{{ "active" if page == "tracks" else "xxxx" }}" ><a href="#about">About</a></li>
-            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="tracks">Tracks</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
+            <li class="{{ "active" if page == "about" else "xxxx" }}" ><a href="about">About</a></li>
+            <li class="{{ "active" if page == "map" else "xxxx" }}" ><a href="map">Map</a></li>
+            <li class="{{ "active" if page == "table" else "xxxx" }}" ><a href="table">Table</a></li>
+            <li class="{{ "active" if page == "tracks" else "xxxx" }}" ><a href="tracks">Tracks</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="../navbar/">Default</a></li>

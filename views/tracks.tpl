@@ -1,4 +1,4 @@
-% include('tbstop.tpl', page='tracks', page_title='Page AAAA')
+% include('tbstop.tpl', page='tracks', page_title='OwnTracks Tracks')
 
 
 
