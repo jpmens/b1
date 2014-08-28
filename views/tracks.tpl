@@ -3,6 +3,7 @@
 <head>
     <title>Simple Leaflet Map</title>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/track.css" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/leaflet.label.css" />
     <link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
@@ -10,37 +11,53 @@
 </head>
 <body>
 
-    <select id='userdev'></select>
-    <input type='text' id='fromdate' value='2014-08-19' />
-    <input type='text' id='todate' value='2014-08-20' />
+  <div id='container'>
+      <div id='navbar'>
+
+	<ul>
+	    <li>User/Device: <select id='userdev'></select></li>
+	    <li>From: <input type='text' id='fromdate' value='2014-08-19' /></li>
+	    <li>To: <input type='text' id='todate' value='2014-08-20' /></li>
 
 
-    Point every KM: 
-    <select id='spacing'>
-    	<option selected>2</option>
-    	<option>5</option>
-    	<option>10</option>
-    	<option>20</option>
-    	<option>40</option>
-    </select>
+	    <li>Point every KM: 
+	    <select id='spacing'>
+		<option selected>2</option>
+		<option>5</option>
+		<option>10</option>
+		<option>20</option>
+		<option>40</option>
+	    </select></li>
 
-    <div id='datep'></div>
 
-	<div id="colorPicker1">
+	    <div id='datep'></div>
+
+	    <li>Color: 	<div id="colorPicker1">
                     <a class="color"><div class="colorInner"></div></a>
                     <div class="track"></div>
                     <ul class="dropdown"><li></li></ul>
                     <input type="hidden" class="colorInput"/>
-        </div>
+		</div></li>
 
 
-    <a href='#' id='getmap'>Show on map</a>
-    <a href='#' id='dn_txt'>txt</a>
+	    <li><a href='#' id='getmap'>Show on map</a></li>
+	    <li>Download
+	    	<ul>
+		    <li><a href='#' id='dn_txt'>TXT</a></li>
+		    <li><a href='#' id='dn_csv'>CSV</a></li>
+		    <li>GPX</li>
+		    <li>GeoJSON</li>
+		    </ul>
+		</li>
 
+	</ul>
 
-    <!-- <a href='#' id='nextdate'>Next</a> -->
+	    <!-- <a href='#' id='nextdate'>Next</a> -->
+	</div> <!-- end navbar -->
 
-    <div id="map" style="width: 600px; height: 400px"></div>
+    <div id='content'>
+	    <div id="map"></div>
+    </div>
 
     <script src="js/leaflet.js"></script>
     <!-- https://github.com/Leaflet/Leaflet.label -->
@@ -216,6 +233,12 @@
 			e.preventDefault();
 			download('txt');
 		});
+
+		$('#dn_csv').on('click', function (e) {
+			e.preventDefault();
+			download('csv');
+		});
+
 
 		$('#nextdate').on('click', function (e) {
 			e.preventDefault();

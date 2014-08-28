@@ -42,6 +42,9 @@ def getDBdata(username, device, from_date, to_date, spacing):
         weather = l.weather
         revgeo  = l.revgeo
 
+        # FIXME: add vel, cog from json
+        # FIXME: add distance haversine to previous point
+
         tp = {
             'lat' : float(l.lat),
             'lon' : float(l.lon),
@@ -61,6 +64,10 @@ def enable_cors():
 @app.route('/')
 def index():
     return template('index', dict(name="JP M", age=69))
+
+@app.route('/b')
+def page_b():
+    return template('b', dict(name="JP M", age=69))
 
 @app.route('/hello')
 def hello():
@@ -118,6 +125,7 @@ def users():
 @app.route('/api/download', method='GET')
 def get_download():
     mimetype = {
+        'csv':  'text/csv',
         'txt':  'text/plain',
     }
 
@@ -125,6 +133,9 @@ def get_download():
     from_date = request.params.get('fromdate')
     to_date = request.params.get('todate')
     fmt = request.params.get('format')
+
+    if fmt not in mimetype:
+        return { 'error' : "Unsupported download-type requested" }
 
     username, device = userdev.split('|')
     trackname = 'owntracks-%s-%s-%s-%s' % (username, device, from_date, to_date)
@@ -134,18 +145,36 @@ def get_download():
     sio = StringIO()
     s = codecs.getwriter('utf8')(sio)
 
-    s.write("%-10s %-10s %s\n" % ("Latitude", "Longitude", "Timestamp (UTC)"))
+    if fmt == 'txt':
 
-    for tp in track:
+        s.write("%-10s %-10s %s\n" % ("Latitude", "Longitude", "Timestamp (UTC)"))
 
-        revgeo = tp.get('revgeo', "")
+        for tp in track:
 
-        s.write(u'%-10s %-10s %s %-14s %s\n' % \
-            (tp.get('lat'),
-            tp.get('lon'),
-            tp.get('tst'),
-            tp.get('weather', ""),
-            revgeo))
+            revgeo = tp.get('revgeo', "")
+
+            s.write(u'%-10s %-10s %s %-14s %s\n' % \
+                (tp.get('lat'),
+                tp.get('lon'),
+                tp.get('tst'),
+                tp.get('weather', ""),
+                revgeo))
+
+    if fmt == 'csv':
+
+        tp = track[0]
+        title = ""
+        for key in tp.keys():
+            title = title + u'"%s";' % key
+
+        s.write("%s\n" % title[0:-1])  # chomp last separator
+
+        for tp in track:
+            line = ""
+            for key in tp:
+                line = line + u'"%s";' % tp[key]
+
+            s.write(u'%s\n' % line)
 
     content_type = 'application/binary'
     if fmt in mimetype:

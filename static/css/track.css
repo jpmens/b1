@@ -1,0 +1,16 @@
+body {
+	width: 100%;
+}
+
+#map {
+	width: 90%;
+	height: 500px;
+}
+
+#content {
+  margin-left:  35%;
+}
+#navbar {
+  float: left;
+  width: 35%;
+}
