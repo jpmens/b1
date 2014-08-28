@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.insert(0, './lib')
 import bottle
 from bottle import response, template, static_file, request
 from dbschema import Location, fn
