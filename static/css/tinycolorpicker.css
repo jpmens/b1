@@ -30,12 +30,13 @@
 #colorPicker1 .color {
     width:          25px;
     height:         25px;
-    padding:        1px;
+    padding:        0px;
     border:         1px solid #ccc;
     display:        block;
     position:       relative;
     z-index:        11;
-    background-color: #EFEFEF;
+    // background-color: #EFEFEF;
+    background-color: #FF0000;
     -webkit-border-radius: 27px;
     -moz-border-radius: 27px;
     border-radius: 27px;
@@ -62,80 +63,6 @@
 }
 
 #colorPicker1 .dropdown li{
-    height: 25px;
-    cursor: pointer;
-}
-
-/* COLORPICKER 2 EXAMPLE */
-#colorPicker2
-{
-    width:          87px;
-    height:         30px;
-    position: relative;
-    clear: both;
-    margin: 0 auto 20px;
-}
-
-#colorPicker2 .track {
-    background:     #EFEFEF url(../images/firefox.png) no-repeat 50% 50%;
-    height:         90px;
-    width:          90px;
-    padding:        10px;
-    position:       absolute;
-    cursor:         crosshair;
-    float:          left;
-    left:           45px;
-    top:            -41px;
-    display:        none;
-    border:         1px solid #ccc;
-    z-index:        10;
-    -webkit-border-radius: 90px;
-    -moz-border-radius: 90px;
-    border-radius: 90px;
-
-}
-
-#colorPicker2 .color {
-    width:          45px;
-    height:         25px;
-    line-height:    25px;
-    text-decoration : none;
-    padding:        1px;
-    border:         1px solid #ccc;
-    display:        block;
-    position:       relative;
-    z-index:        11;
-    color:           #666;
-    background-color: #EFEFEF;
-    -webkit-border-radius: 27px;
-    -moz-border-radius: 27px;
-    border-radius: 27px;
-    cursor: pointer;
-    padding: 0 0 0 10px;
-}
-
-#colorPicker2 .colorInner {
-    width:          25px;
-    height:         25px;
-    float: right;
-    -webkit-border-radius: 27px;
-    -moz-border-radius: 27px;
-    border-radius: 27px;
-    border-left: 3px solid #ccc;
-}
-
-#colorPicker2 .dropdown {
-    list-style: none;
-    display: none;
-    width: 27px;
-    position: absolute;
-    top: 26px;
-    border: 1px solid #ccc;
-    right: 0;
-    z-index: 1000;
-}
-
-#colorPicker2 .dropdown li{
     height: 25px;
     cursor: pointer;
 }
