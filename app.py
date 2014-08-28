@@ -10,11 +10,49 @@ try:
 except:
     from StringIO import StringIO
 import os
+import codecs
+from datetime import datetime
+from dateutil import tz
 
 POINT_KM = 2
 
 app = application = bottle.Bottle()
 bottle.SimpleTemplate.defaults['get_url'] = app.get_url
+
+def getDBdata(username, device, from_date, to_date, spacing):
+
+    track = []
+
+    if from_date == to_date:
+        to_date = "%s 23:59:59" % to_date
+    print "FROM=%s, TO=%s" % (from_date, to_date)
+
+    query = Location.select().where(
+                (Location.username == username) &
+                (Location.device == device) &
+                (Location.tst.between(from_date, to_date))
+                )
+    query = query.order_by(Location.tst.asc())
+    for l in query:
+
+        dbid    = l.id
+        lat     = float(l.lat)
+        lon     = float(l.lon)
+        dt      = l.tst
+        weather = l.weather
+        revgeo  = l.revgeo
+
+        tp = {
+            'lat' : float(l.lat),
+            'lon' : float(l.lon),
+            'tst' : l.tst,
+            'weather' : l.weather,
+            'revgeo'  : l.revgeo,
+        }
+
+        track.append(tp)
+
+    return track
 
 @app.hook('after_request')
 def enable_cors():
@@ -91,41 +129,36 @@ def get_download():
     username, device = userdev.split('|')
     trackname = 'owntracks-%s-%s-%s-%s' % (username, device, from_date, to_date)
     
-    if from_date == to_date:
-        to_date = "%s 23:59:59" % to_date
+    track = getDBdata(username, device, from_date, to_date, None)
 
-    output = StringIO()
+    sio = StringIO()
+    s = codecs.getwriter('utf8')(sio)
 
-    output.write("%-10s %-10s %s\n" % ("Latitude", "Longitude", "Timestamp (UTC)"))
+    s.write("%-10s %-10s %s\n" % ("Latitude", "Longitude", "Timestamp (UTC)"))
 
-    query = Location.select().where(
-                (Location.username == username) &
-                (Location.device == device) &
-                (Location.tst.between(from_date, to_date))
-                )
-    query = query.order_by(Location.tst.asc())
-    for l in query:
+    for tp in track:
 
-        dbid    = l.id
-        tst     = l.tst
-        lat     = l.lat
-        lon     = l.lon
+        revgeo = tp.get('revgeo', "")
 
-        output.write("%-10s %-10s %s\n" % (lat, lon, tst))
-        # coords.append( [ lon, lat ] )
+        s.write(u'%-10s %-10s %s %-14s %s\n' % \
+            (tp.get('lat'),
+            tp.get('lon'),
+            tp.get('tst'),
+            tp.get('weather', ""),
+            revgeo))
 
     content_type = 'application/binary'
     if fmt in mimetype:
         content_type = mimetype[fmt]
 
-    output.seek(0, os.SEEK_END)
-    octets = output.tell()
+    s.seek(0, os.SEEK_END)
+    octets = s.tell()
 
     response.content_type = content_type
     response.headers['Content-Disposition'] = 'attachment; filename="%s"' % (trackname)
     response.headers['Content-Length'] = str(octets)
 
-    return output.getvalue()
+    return s.getvalue()
 
 
 @app.route('/api/getGeoJSON', method='POST')
@@ -140,12 +173,9 @@ def get_geoJSON():
     to_date = data.get('todate')
     spacing = int(data.get('spacing', POINT_KM))
 
+    track = getDBdata(username, device, from_date, to_date, spacing)
+
     last_point = [None, None]
-
-    if from_date == to_date:
-        to_date = "%s 23:59:59" % to_date
-
-    print "FROM=%s, TO=%s" % (from_date, to_date)
 
     collection = {
             'type' : 'FeatureCollection',
@@ -167,18 +197,18 @@ def get_geoJSON():
     pointlist = []
     track_coords = []
 
-    query = Location.select().where(
-                (Location.username == username) &
-                (Location.device == device) &
-                (Location.tst.between(from_date, to_date))
-                )
-    query = query.order_by(Location.tst.asc())
-    for l in query:
+    for tp in track:
 
-        dbid    = l.id
-        tst     = l.tst
-        lat     = float(l.lat)
-        lon     = float(l.lon)
+        lat = tp['lat']
+        lon = tp['lon']
+        tst = tp['tst']
+
+        description = str(tst)
+        
+        if tp.get('weather') is not None:
+            description = description + " %s" % tp.get('weather')
+        if tp.get('revgeo') is not None:
+            description = description + " %s" % tp.get('revgeo')
 
         track_coords.append( [ lon, lat ] )
 
@@ -196,7 +226,7 @@ def get_geoJSON():
                         'coordinates' : [lon, lat],
                     },
                     'properties' : {
-                        'description' : str(tst),
+                        'description' : description,
                     }
             }
             pointlist.append(point)
