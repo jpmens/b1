@@ -21,3 +21,58 @@ table:
 tracks:
 	homogenize maps (mapbox, vs. OSM, etc.) with map/
 	CSS, CSS, CSS, CSS!
+
+
+
+yes correct Safari(Mac) and mysql, mosquitto, m2s.py, apache, app.py, tablerepub.py running on pi:
+
+top - 09:59:33 up 9 days, 20:45,  1 user,  load average: 0,02, 0,05, 0,05
+Tasks:  87 total,   1 running,  86 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1,1 us,  1,4 sy,  0,0 ni, 96,1 id,  1,4 wa,  0,0 hi,  0,0 si,  0,0 st
+KiB Mem:    447996 total,   347716 used,   100280 free,    45128 buffers
+KiB Swap:   102396 total,        4 used,   102392 free,   135852 cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S  %CPU %MEM    TIME+  COMMAND
+18729 pi        20   0  5220 1388 1036 R   1,3  0,3   0:00.64 top
+ 2606 mysql     20   0  310m  91m 4040 S   0,7 20,9  80:42.10 mysqld
+17355 pi        20   0  9852 1516  880 S   0,3  0,3   0:01.42 sshd
+    1 root      20   0  2148  684  580 S   0,0  0,2   0:39.31 init
+    2 root      20   0     0    0    0 S   0,0  0,0   0:00.01 kthreadd
+    3 root      20   0     0    0    0 S   0,0  0,0   0:58.04 ksoftirqd/0
+    4 root      20   0     0    0    0 S   0,0  0,0   0:00.00 kworker/0:0
+    5 root       0 -20     0    0    0 S   0,0  0,0   0:00.00 kworker/0:0H
+
+
+Hier der output dazu von app.py
+
+192.168.178.25 - - [28/Aug/2014 09:19:14] "POST /api/getGeoJSON HTTP/1.1" 200 8957
+FROM=2014-08-18, TO=2014-08-31
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/wsgiref/handlers.py", line 86, in run
+    self.finish_response()
+  File "/usr/lib/python2.7/wsgiref/handlers.py", line 127, in finish_response
+    self.write(data)
+  File "/usr/lib/python2.7/wsgiref/handlers.py", line 215, in write
+    self._write(data)
+  File "/usr/lib/python2.7/socket.py", line 324, in write
+    self.flush()
+  File "/usr/lib/python2.7/socket.py", line 303, in flush
+    self._sock.sendall(view[write_offset:write_offset+buffer_size])
+error: [Errno 32] Broken pipe
+----------------------------------------
+Exception happened during processing of request from ('192.168.178.25', 57354)
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/SocketServer.py", line 295, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/usr/lib/python2.7/SocketServer.py", line 321, in process_request
+    self.finish_request(request, client_address)
+  File "/usr/lib/python2.7/SocketServer.py", line 334, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python2.7/SocketServer.py", line 651, in __init__
+    self.finish()
+  File "/usr/lib/python2.7/SocketServer.py", line 704, in finish
+    self.wfile.flush()
+  File "/usr/lib/python2.7/socket.py", line 303, in flush
+    self._sock.sendall(view[write_offset:write_offset+buffer_size])
+error: [Errno 32] Broken pipe
+----------------------------------------

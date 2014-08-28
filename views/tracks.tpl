@@ -38,7 +38,7 @@
 	    	<ul>
 		    <li><a href='#' id='dn_txt'>TXT</a></li>
 		    <li><a href='#' id='dn_csv'>CSV</a></li>
-		    <li>GPX</li>
+		    <li><a href='#' id='dn_gpx'>GPX</a></li>
 		    <li>GeoJSON</li>
 		    </ul>
 		</li>
@@ -211,6 +211,7 @@
 			getGeoJSON();
 		});
 
+		/* FIXME: consolidate the download funcs into 1 using attrib to get downl type */
 		$('#dn_txt').on('click', function (e) {
 			e.preventDefault();
 			download('txt');
@@ -219,6 +220,11 @@
 		$('#dn_csv').on('click', function (e) {
 			e.preventDefault();
 			download('csv');
+		});
+
+		$('#dn_gpx').on('click', function (e) {
+			e.preventDefault();
+			download('gpx');
 		});
 
 

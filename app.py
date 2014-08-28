@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+__author__    = 'Jan-Piet Mens <jpmens()gmail.com>'
+__copyright__ = 'Copyright 2014 Jan-Piet Mens'
 
 import sys
 sys.path.insert(0, './lib')
@@ -15,6 +19,9 @@ import os
 import codecs
 from datetime import datetime
 from dateutil import tz
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+from xml.etree import ElementTree as ET
+from ElementTree_pretty import prettify
 
 POINT_KM = 2
 
@@ -69,23 +76,23 @@ def index():
 
 @app.route('/about')
 def page_about():
-    return template('about', dict(name="JP M", age=69))
+    return template('about')
 
 @app.route('/console')
 def page_console():
-    return template('console', dict(name="JP M", age=69))
+    return template('console')
 
 @app.route('/map')
 def page_map():
-    return template('map', dict(name="JP M", age=69))
+    return template('map')
 
 @app.route('/table')
 def page_table():
-    return template('table', dict(name="JP M", age=69))
+    return template('table')
 
 @app.route('/tracks')
 def page_tracks():
-    return template('tracks', dict(name="JP M", age=69))
+    return template('tracks')
 
 @app.route('/hello')
 def hello():
@@ -145,6 +152,7 @@ def get_download():
     mimetype = {
         'csv':  'text/csv',
         'txt':  'text/plain',
+        'gpx':  'application/gpx+xml',
     }
 
     userdev = request.params.get('userdev')
@@ -159,6 +167,15 @@ def get_download():
     trackname = 'owntracks-%s-%s-%s-%s' % (username, device, from_date, to_date)
     
     track = getDBdata(username, device, from_date, to_date, None)
+
+    # Let's run through this data to get a total trip distance in km.
+
+    kilometers = 0.0
+    n = 1
+    for tp in track[0:-1]:
+        distance = haversine(tp['lon'], tp['lat'], track[n]['lon'], track[n]['lat'])
+        kilometers += distance
+        n += 1
 
     sio = StringIO()
     s = codecs.getwriter('utf8')(sio)
@@ -177,6 +194,7 @@ def get_download():
                 tp.get('tst'),
                 tp.get('weather', ""),
                 revgeo))
+        s.write("\nTrip: %.2f kilometers" % (kilometers))
 
     if fmt == 'csv':
 
@@ -194,6 +212,41 @@ def get_download():
 
             s.write(u'%s\n' % line)
 
+    if fmt == 'gpx':
+        root = ET.Element('gpx')
+        root.set('version', '1.0')
+        root.set('creator', 'OwnTracks GPX Exporter')
+        root.set('xmlns', "http://www.topografix.com/GPX/1/0")
+        root.append(Comment('JP'))
+
+        gpxtrack = Element('trk')
+        track_name = SubElement(gpxtrack, 'name')
+        track_name.text = trackname
+        track_desc = SubElement(gpxtrack, 'desc')
+        track_desc.text = "Trip: %.2f kilometers" % (kilometers)
+
+        segment = Element('trkseg')
+        gpxtrack.append(segment)
+
+        trackpoints = []
+
+        for tp in track:
+            t = Element('trkpt')
+            t.set('lat', str(tp['lat']))
+            t.set('lon', str(tp['lon']))
+            t_time = SubElement(t, 'time')
+            t_time.text = tp['tst'].isoformat()[:19]+'Z'
+            # t.append(Comment(u'#%s %s' % (dbid, topic)))
+            trackpoints.append(t)
+
+        root.append(gpxtrack)
+        for trackpoint in trackpoints:
+            segment.append(trackpoint)
+
+        s.write(prettify(root))
+
+
+
     content_type = 'application/binary'
     if fmt in mimetype:
         content_type = mimetype[fmt]
@@ -202,7 +255,7 @@ def get_download():
     octets = s.tell()
 
     response.content_type = content_type
-    response.headers['Content-Disposition'] = 'attachment; filename="%s"' % (trackname)
+    response.headers['Content-Disposition'] = 'attachment; filename="%s.%s"' % (trackname, fmt)
     response.headers['Content-Length'] = str(octets)
 
     return s.getvalue()
