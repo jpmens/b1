@@ -32,8 +32,7 @@ def getDBdata(username, device, from_date, to_date, spacing):
 
     track = []
 
-    if from_date == to_date:
-        to_date = "%s 23:59:59" % to_date
+    to_date = "%s 23:59:59" % to_date
     print "FROM=%s, TO=%s" % (from_date, to_date)
 
     query = Location.select().where(
