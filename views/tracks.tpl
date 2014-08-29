@@ -1,6 +1,7 @@
 % include('tbstop.tpl', page='tracks', page_title='OwnTracks Tracks')
 
 
+    <link href="track/track-style.css" rel="stylesheet">
 
 
 
@@ -24,6 +25,13 @@
 
 
 	    <div id='datep'></div>
+
+	<select onchange="this.className=this.options[this.selectedIndex].className"
+	    class="redText">
+	    <option class="redText"  value="#ff0000" >Red</option>
+	    <option class="blueText" value="#0000ff" >Blue</option>
+	    <option class="yellowText" value="FF9900" >Yellow</option>
+	</select>
 
 	    <li>Color: 	<div id="colorPicker1">
                     <a class="color"><div class="colorInner"></div></a>

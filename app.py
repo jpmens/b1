@@ -28,6 +28,8 @@ POINT_KM = 2
 app = application = bottle.Bottle()
 bottle.SimpleTemplate.defaults['get_url'] = app.get_url
 
+app.config.load_config('jjj.conf')
+
 def getDBdata(username, device, from_date, to_date, spacing):
 
     track = []
@@ -65,6 +67,10 @@ def getDBdata(username, device, from_date, to_date, spacing):
 
     return track
 
+@app.hook('config')
+def on_config_change(key, new_val):
+    print "****** warning: config changes: ", key, " == ", new_val
+
 @app.hook('after_request')
 def enable_cors():
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -75,6 +81,10 @@ def index():
 
 @app.route('/about')
 def page_about():
+
+    # FIXME: example:
+    app.config.update('m2s', dbname="FOOFOFO")
+
     return template('about')
 
 @app.route('/console')
@@ -100,6 +110,30 @@ def hello():
         'number' : 69,
     }
     return data
+
+@app.route('/config.js')
+def config_js():
+
+    keys = [ 'host', 'port', 'username', 'password' ]
+    newconf = {}
+
+    print app.config
+
+    for k in keys:
+        val = None
+        try:
+            val = app.config["websocket.%s" % k ]
+            newconf[k] = val
+        except:
+            newconf[k] = None
+
+        #if k.startswith('websocket'):
+        #    newk = k.split('.')[1]      # "websocket.host" => "host"
+        #    newconf[newk] = app.config[k]
+
+    print newconf
+    response.content_type = 'text/javascript; charset: UTF-8'
+    return template('config-js', newconf)
 
 @app.route('/db')
 def f1():
