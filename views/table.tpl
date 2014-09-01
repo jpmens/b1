@@ -11,8 +11,8 @@
 
     <script type="text/javascript" charset="utf8" src="table/dataTables.bootstrap.js"></script>
 
+    <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript" src="js/mqttws31.js"></script>
-    <script type="text/javascript" src="table/config.js"></script>
     <script type="text/javascript" src="table/mqttfuncs.js"></script>
 
 <script type="text/javascript">

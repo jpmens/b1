@@ -6,12 +6,12 @@ all pages:
 	height of page (scrollbar is visible)
 
 console:
-	config.js: bring to other config.js' format and consolidate
+	DONE: config.js: bring to other config.js' format and consolidate
 	add small timestamp, if possible
 	table-ize topic vs. payload
 
 map:
-	config.js
+	DONE: config.js
 	CSS for height of map
 	remove code for loading geofences and geo-fences.json
 
@@ -21,6 +21,10 @@ table:
 tracks:
 	homogenize maps (mapbox, vs. OSM, etc.) with map/
 	CSS, CSS, CSS, CSS!
+
+bubbles:
+	page with bubbles of all vehicles (red/green/yellow); click or hover
+	for details of each
 
 tools:
 	add manual note to a vehicle (e.g. is in repair); show in table

@@ -23,4 +23,8 @@ var config = {
    geoupdate : {{ !geoupdate }},
    geofences:    {{ !geofences if geofences else "null" }},
 
+   // tables
+   topic_visible : {{ !topic_visible }},
+   topiclist: {{ !topiclist }},
+
 };

@@ -4,7 +4,7 @@ var mqtt;
 
 function MQTTconnect()
 {
-	mqtt = new Messaging.Client(config.websockethost, config.websocketport,
+	mqtt = new Messaging.Client(config.host, config.port,
 				"livetable-" + parseInt(Math.random() * 100, 10));
 
 	mqtt.onConnectionLost = function (responseObject) {
@@ -63,11 +63,11 @@ function MQTTconnect()
 		timeout: 60,
 		useSSL: config.usetls,
 		onSuccess: function () {
-			console.log("Host: " + config.websockethost + ", Port:" +  config.websocketport);
+			console.log("Host: " + config.host + ", Port:" +  config.port);
 			$('#mqttstatus').html("Connected");
-			$('#mqttstatus-details').html("Host: " + config.websockethost + ", Port:" +  config.websocketport);
-			for (n in config.subscribelist) {
-				topic = config.subscribelist[n];
+			$('#mqttstatus-details').html("Host: " + config.host + ", Port:" +  config.port);
+			for (n in config.topiclist) {
+				topic = config.topiclist[n];
 				console.log("subscribe to " + topic);
 				mqtt.subscribe(topic, {qos: 0});
 			}

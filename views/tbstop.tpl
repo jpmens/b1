@@ -62,6 +62,7 @@
             <li class="{{ "active" if page == "table" else "xxxx" }}" ><a href="table">Table</a></li>
             <li class="{{ "active" if page == "tracks" else "xxxx" }}" ><a href="tracks">Tracks</a></li>
             <li class="{{ "active" if page == "console" else "xxxx" }}" ><a href="console">Console</a></li>
+            <li class="{{ "active" if page == "status" else "xxxx" }}" ><a href="status">Status</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="#">Default</a></li>

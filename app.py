@@ -98,6 +98,10 @@ def page_console():
 def page_map():
     return template('map')
 
+@app.route('/status')
+def page_console():
+    return template('status')
+
 @app.route('/table')
 def page_table():
     return template('table')
