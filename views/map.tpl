@@ -18,7 +18,7 @@
 
 
     <script src="js/mqttws31.js"></script>
-    <script src="map/config.js"></script>
+    <script src="config.js"></script>
     <script src="map/userdata.js"></script>
     <script src="map/mapfuncs.js"></script>
     <script src="map/mqttfuncs.js"></script>
@@ -41,7 +41,7 @@ FIXME
 
     <script>
     	$(document).ready(function() {
-    		load_map(config.apiKey);
+    		load_map(config.apikey);
     		// getuserlist();
     		MQTTconnect();
     		$('#msg').val('starting');

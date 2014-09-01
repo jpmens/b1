@@ -3,7 +3,7 @@ var mqtt;
 
 function MQTTconnect()
 {
-	mqtt = new Messaging.Client(config.websockethost, config.websocketport,
+	mqtt = new Messaging.Client(config.host, config.port,
 				"leaf" + parseInt(Math.random() * 100, 10));
 
 	mqtt.onConnectionLost = function (responseObject) {
@@ -79,8 +79,8 @@ function MQTTconnect()
 		useSSL: config.usetls,
 		onSuccess: function () {
 			$('#mqttstatus').html("Connected");
-			$('#mqttstatus-details').html("Host: " + config.websockethost + ", Port:" +  config.websocketport);
-			mqtt.subscribe(config.subscribe, {qos: 0});
+			$('#mqttstatus-details').html("Host: " + config.host + ", Port:" +  config.port);
+			mqtt.subscribe(config.topic, {qos: 0});
 		},
 		onFailure: function (message) {
 			$('#mqttstatus').html("Connection failed");

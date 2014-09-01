@@ -117,14 +117,16 @@ def hello():
 @app.route('/config.js')
 def config_js():
     ''' Produce a `config.js' from the [websocket] section of our config
-        file. '''
+        file. We have to muck about a bit to convert None etc. to JavaScript
+        types ... '''
 
     newconf = cf.config('websocket')
     for key in newconf:
+        if type(newconf[key]) == str:
+            if newconf[key][0] != '"' and newconf[key][0] != '"':
+                newconf[key] = "'" + newconf[key] + "'"
         if type(newconf[key]) == bool:
             newconf[key] = 'true' if newconf[key] else 'false';
-        #if type(newconf[key]) == 'NoneType':
-        #    newconf[key] = 'null'
         print key, " = ", type(newconf[key]), " : ",  newconf[key]
 
     response.content_type = 'text/javascript; charset: UTF-8'

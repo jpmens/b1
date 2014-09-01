@@ -6,7 +6,7 @@ var config = {
    // Websockets-enabled MQTT broker. Note: this is the *Websocket* port.
 
 
-   host:        '{{ !host }}',
+   host:        {{ !host }},
    port:        {{ !port }},
    usetls:      {{ !usetls }},
    cleansession:      {{ !cleansession }},
@@ -16,6 +16,11 @@ var config = {
    username:    {{ !username if username else "null" }},
    password:    {{ !password if password else "null" }},
 
-   topic: 	'{{ !topic }}',
+   topic: 	{{ !topic }},
+   apikey: 	{{ !apikey }},
+
+   // should be obsoleted
+   geoupdate : {{ !geoupdate }},
+   geofences:    {{ !geofences if geofences else "null" }},
 
 };
