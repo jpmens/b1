@@ -1,11 +1,16 @@
 % include('tbstop.tpl', page='tracks', page_title='OwnTracks Tracks')
 
 
-    <link href="track/track-style.css" rel="stylesheet">
-    <link href="css/datepicker.css" rel="stylesheet">
-    <link href="css/datepicker3.css" rel="stylesheet">
-    <script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
+	<link href="track/track-style.css" rel="stylesheet">
+	<link href="css/datepicker.css" rel="stylesheet">
+	<link href="css/datepicker3.css" rel="stylesheet">
+	<script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
 
+
+	<script src="config.js" type="text/javascript"></script>
+	<script src='map/mapbox.js' type="text/javascript"></script>
+	<link href='map/mapbox.css' rel='stylesheet' />
+	<script src="map/mapfuncs.js" type="text/javascript"></script>
 
 
 
@@ -51,7 +56,6 @@
 	    <div><a href='#' fmt='csv' class='download'>CSV</a></div>
 	    <div><a href='#' fmt='gpx' class='download'>GPX</a></div>
 
-	    <!-- <a href='#' id='nextdate'>Next</a> -->
 	</div> <!-- end navbar -->
 
     <div id='content'>
@@ -64,17 +68,7 @@
 	var geojson;
 	var line_color = '#ff0000';
 
-    	var lat = 50.109544;
-	var lon = 8.694585;
-
-        map = L.map('map').setView([lat, lon], 5);
-        mapLink = 
-            '<a href="http://openstreetmap.org">OpenStreetMap</a>';
-	L.tileLayer(
-            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data &copy; ' + mapLink,
-            maxZoom: 18,
-	}).addTo(map);
+	load_map(config.apikey);
 
 
 	var $select = $('#userdev');
@@ -98,27 +92,11 @@
 				}
 		});
 
-/*
-	$('#datep').DatePicker({
-		flat: true,
-		date: ['2014-08-19', '2014-08-20'],
-		current: '2014-08-26',
-		calendars: 2,
-		mode: 'range',
-		starts: 1,
-		onChange: function(formatted, dates) {
-			// console.log(formatted);
-			// console.log(dates);
-
-			$('#fromdate').val(formatted[0]);
-			$('#todate').val(formatted[1]);
-		},
-	});
-*/
 
 	$('#datepick').datepicker({
 	    format: "yyyy-mm-dd",
 	    autoclose: true,
+	    weekStart: 1, 	// 0=Sunday
 	    multidate: 2,
 	    multidateSeparator: ',',
 	    todayHighlight: true
@@ -269,39 +247,6 @@
 			console.log(format);
 			download(format);
 		});
-
-		$('#dn_csv').on('click', function (e) {
-			e.preventDefault();
-			download('csv');
-		});
-
-		$('#dn_gpx').on('click', function (e) {
-			e.preventDefault();
-			download('gpx');
-		});
-
-
-		$('#nextdate').on('click', function (e) {
-			e.preventDefault();
-
-			var d_from;
-			var d_to;
-
-
-			var d = $('#datep').DatePickerGetDate(false);
-			// console.log(d);
-			d_from = new Date(d[0]);
-			d_to   = new Date(d[1]);
-
-			d_from = d_from.setDate(d_from.getDate() + 1);
-			d_to   = d_to.setDate(d_to.getDate() + 1);
-
-			$('#datep').DatePickerSetDate(d_to, true);
-
-			$('#todate').val( $('#datep').DatePickerGetDate(true)[1] );
-
-		});
-
 
         });
 	

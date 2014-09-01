@@ -30,9 +30,23 @@ function load_geofences()
 
 function load_map(apiKey)
 {
-	map = L.mapbox.map('map', apiKey).setView([51.505, -0.09], 13);
-	var linecolor = 'green';
-	var latlngs = Array();
+	var lat = 51.505;
+	var lon = -0.09;
+
+	if (apiKey) {	// Mapbox
+		map = L.mapbox.map('map', apiKey).setView([lat, lon], 13);
+		var linecolor = 'green';
+		var latlngs = Array();
+	} else { // OSM
+		map = L.map('map').setView([lat, lon], 5);
+		mapLink =
+		    '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+		L.tileLayer(
+		    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		    attribution: 'Map data &copy; ' + mapLink,
+		    maxZoom: 18,
+		}).addTo(map);
+	}
 
 	map.scrollWheelZoom.disable();
 

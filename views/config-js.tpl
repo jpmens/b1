@@ -17,7 +17,7 @@ var config = {
    password:    {{ !password if password else "null" }},
 
    topic: 	{{ !topic }},
-   apikey: 	{{ !apikey }},
+   apikey:      {{ !apikey if apikey else "null" }},
 
    // should be obsoleted
    geoupdate : {{ !geoupdate }},

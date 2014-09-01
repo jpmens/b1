@@ -5,13 +5,8 @@
     <!-- Custom styles for this template -->
     <link href="map/map-style.css" rel="stylesheet">
 
-    <!-- FIXME: copy local 
-    <script src='map/mapbox.js'></script>
+    <script src='map/mapbox.js' type="text/javascript"></script>
     <link href='map/mapbox.css' rel='stylesheet' />
-    -->
-
-        <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
-	    <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
 
     <!-- http://code.google.com/p/jqueryrotate/ -->
     <script src="js/jQueryRotateCompressed.js"></script>
