@@ -24,9 +24,7 @@ from ElementTree_pretty import prettify
 from cf import conf
 from dbschema import Location, fn
 
-
-cf = conf('jjj.conf')
-
+cf = conf(os.getenv('WAPPCONFIG', 'wapp.conf'))
 
 POINT_KM = 2
 

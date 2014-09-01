@@ -3,12 +3,13 @@
 from peewee import *
 from cf import conf
 import datetime
+import os
 import sys
 
-cf = conf('jjj.conf')
+cf = conf(os.getenv('WAPPCONFIG', 'wapp.conf'))
 
 sql_db = None
-if(cf.g('database', 'dbengine', 'mysql') == 'postgresql'):
+if (cf.g('database', 'dbengine', 'mysql') == 'postgresql'):
     # Use PostreSQL configuration
     sql_db = PostgresqlDatabase(cf.g('database', 'dbname', 'owntracks'),
         user=cf.g('database', 'dbuser'),
