@@ -22,6 +22,11 @@ tracks:
 	homogenize maps (mapbox, vs. OSM, etc.) with map/
 	CSS, CSS, CSS, CSS!
 
+tools:
+	add manual note to a vehicle (e.g. is in repair); show in table
+	geofence table / editor
+	
+
 
 
 yes correct Safari(Mac) and mysql, mosquitto, m2s.py, apache, app.py, tablerepub.py running on pi:

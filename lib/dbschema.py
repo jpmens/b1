@@ -1,29 +1,25 @@
 #!/usr/bin/env python
 
 from peewee import *
-from config import Config
+from cf import conf
 import datetime
 import sys
 
-try:
-    cf = Config()
-except Exception, e:
-    print "Can't load configuration: %s" % (str(e))
-    sys.exit(1)
+cf = conf('jjj.conf')
 
 sql_db = None
-if(cf.get('dbengine', 'mysql') == 'postgresql'):
+if(cf.g('database', 'dbengine', 'mysql') == 'postgresql'):
     # Use PostreSQL configuration
-    sql_db = PostgresqlDatabase(cf.get('dbname', 'owntracks'),
-        user=cf.get('dbuser'),
-        port=cf.get('dbport', 5432),
+    sql_db = PostgresqlDatabase(cf.g('database', 'dbname', 'owntracks'),
+        user=cf.g('database', 'dbuser'),
+        port=cf.g('database', 'dbport', 5432),
         threadlocals=True)
 else:
-    sql_db = MySQLDatabase(cf.get('dbname', 'owntracks'),
-        user=cf.get('dbuser'),
-        passwd=cf.get('dbpasswd'),
-        host=cf.get('dbhost', 'localhost'),
-        port=cf.get('dbport', 3306),
+    sql_db = MySQLDatabase(cf.g('database', 'dbname', 'owntracks'),
+        user=cf.g('database', 'dbuser'),
+        passwd=cf.g('database', 'dbpasswd'),
+        host=cf.g('database', 'dbhost', 'localhost'),
+        port=cf.g('database', 'dbport', 3306),
         threadlocals=True)
 
 

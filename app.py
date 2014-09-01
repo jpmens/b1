@@ -8,7 +8,6 @@ import sys
 sys.path.insert(0, './lib')
 import bottle
 from bottle import response, template, static_file, request
-from dbschema import Location, fn
 import json
 from haversine import haversine
 try:
@@ -22,13 +21,19 @@ from dateutil import tz
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree as ET
 from ElementTree_pretty import prettify
+from cf import conf
+from dbschema import Location, fn
+
+
+cf = conf('jjj.conf')
+
 
 POINT_KM = 2
 
 app = application = bottle.Bottle()
 bottle.SimpleTemplate.defaults['get_url'] = app.get_url
 
-app.config.load_config('jjj.conf')
+# FIXME: load from dict     app.config.load_config('jjj.conf')
 
 def getDBdata(username, device, from_date, to_date, spacing):
 
@@ -113,25 +118,13 @@ def hello():
 
 @app.route('/config.js')
 def config_js():
+    ''' Produce a `config.js' from the [websocket] section of our config
+        file. '''
 
-    keys = [ 'host', 'port', 'username', 'password' ]
-    newconf = {}
+    newconf = cf.config('websocket')
+#    for key in newconf:
+#        print key, " = ", type(newconf[key]), " : ",  newconf[key]
 
-    print app.config
-
-    for k in keys:
-        val = None
-        try:
-            val = app.config["websocket.%s" % k ]
-            newconf[k] = val
-        except:
-            newconf[k] = None
-
-        #if k.startswith('websocket'):
-        #    newk = k.split('.')[1]      # "websocket.host" => "host"
-        #    newconf[newk] = app.config[k]
-
-    print newconf
     response.content_type = 'text/javascript; charset: UTF-8'
     return template('config-js', newconf)
 
