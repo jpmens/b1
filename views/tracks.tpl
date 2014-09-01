@@ -2,56 +2,54 @@
 
 
     <link href="track/track-style.css" rel="stylesheet">
+    <link href="css/datepicker.css" rel="stylesheet">
+    <link href="css/datepicker3.css" rel="stylesheet">
+    <script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
+
 
 
 
   <div id='container'>
       <div id='navbar'>
 
-	<ul>
-	    <li>User/Device: <select id='userdev'></select></li>
-	    <li>From: <input type='text' id='fromdate' value='2014-08-19' /></li>
-	    <li>To: <input type='text' id='todate' value='2014-08-20' /></li>
+      		<input type='hidden' id='fromdate' value='' />
+      		<input type='hidden' id='todate' value='' />
 
+	<div>
+	    User/Device: <select id='userdev'></select>
+	    </div>
 
-	    <li>Point every KM: 
+	<div>
+		<!-- DATE -->
+	     <div id='datepick'></div>
+	     </div>
+
+	<div>
+	    Point every KM: 
 	    <select id='spacing'>
-		<option selected>2</option>
+		<option>2</option>
 		<option>5</option>
 		<option>10</option>
 		<option>20</option>
-		<option>40</option>
-	    </select></li>
+		<option selected>40</option>
+	    </select>
+	    </div>
 
 
-	    <div id='datep'></div>
-
-	<select onchange="this.className=this.options[this.selectedIndex].className"
-	    class="redText">
-	    <option class="redText"  value="#ff0000" >Red</option>
-	    <option class="blueText" value="#0000ff" >Blue</option>
-	    <option class="yellowText" value="FF9900" >Yellow</option>
-	</select>
-
-	    <li>Color: 	<div id="colorPicker1">
-                    <a class="color"><div class="colorInner"></div></a>
-                    <div class="track"></div>
-                    <ul class="dropdown"><li></li></ul>
-                    <input type="hidden" class="colorInput"/>
-		</div></li>
+	    <div>
+	    Color: 	<div id="colorPicker1">
+			    <a class="color"><div class="colorInner"></div></a>
+			    <div class="track"></div>
+			    <ul class="dropdown"><li></li></ul>
+			    <input type="hidden" class="colorInput"/>
+			</div>
+		</div>
 
 
-	    <li><a href='#' id='getmap'>Show on map</a></li>
-	    <li>Download
-	    	<ul>
-		    <li><a href='#' id='dn_txt'>TXT</a></li>
-		    <li><a href='#' id='dn_csv'>CSV</a></li>
-		    <li><a href='#' id='dn_gpx'>GPX</a></li>
-		    <li>GeoJSON</li>
-		    </ul>
-		</li>
-
-	</ul>
+	    <div><a href='#' id='getmap'>Show on map</a></div>
+	    <div><a href='#' fmt='txt' class='download'>TXT</a></div>
+	    <div><a href='#' fmt='csv' class='download'>CSV</a></div>
+	    <div><a href='#' fmt='gpx' class='download'>GPX</a></div>
 
 	    <!-- <a href='#' id='nextdate'>Next</a> -->
 	</div> <!-- end navbar -->
@@ -100,6 +98,7 @@
 				}
 		});
 
+/*
 	$('#datep').DatePicker({
 		flat: true,
 		date: ['2014-08-19', '2014-08-20'],
@@ -115,11 +114,55 @@
 			$('#todate').val(formatted[1]);
 		},
 	});
+*/
+
+	$('#datepick').datepicker({
+	    format: "yyyy-mm-dd",
+	    autoclose: true,
+	    multidate: 2,
+	    multidateSeparator: ',',
+	    todayHighlight: true
+	}).on('changeDate', function(e){
+		console.log( "UTC=" + JSON.stringify($('#datepick').datepicker('getUTCDates' ))  );
+		d = $('#datepick').datepicker('getUTCDates' );
+
+		var d1;
+		var d2;
+
+		if (d.length == 1) {
+			d1 = new Date(d[0]);
+			d2 = d1;
+		} else {
+			d1 = new Date(d[0]);
+			d2 = new Date(d[1]);
+		}
+
+		if (d2 < d1) {
+			var c = d1;
+			d1 = d2;
+			d2 = c;
+		}
+
+		$('#fromdate').val(isodate(d1));
+		$('#todate').val(isodate(d2));
+	});
 
 	function onEachFeature(feature, layer) {
 		if (feature.properties) {
 			layer.bindPopup(feature.properties.description);
 		}
+	}
+
+	function isodate(d) {
+		// http://stackoverflow.com/questions/3066586/
+		var yyyy = d.getFullYear().toString();
+		var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
+		var dd  = d.getDate().toString();
+		var s =  yyyy + "-" +  (mm[1]?mm:"0"+mm[0]) + "-" +  (dd[1]?dd:"0"+dd[0]); // padding
+
+		// console.log(d + ' ---> ' + s);
+
+		return s
 	}
 
 	function getGeoJSON() {
@@ -219,10 +262,12 @@
 			getGeoJSON();
 		});
 
-		/* FIXME: consolidate the download funcs into 1 using attrib to get downl type */
-		$('#dn_txt').on('click', function (e) {
+		$('.download').on('click', function (e) {
 			e.preventDefault();
-			download('txt');
+			// var format = $(e).attr('fmt');
+			var format = $(this).attr('fmt');
+			console.log(format);
+			download(format);
 		});
 
 		$('#dn_csv').on('click', function (e) {
