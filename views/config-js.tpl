@@ -8,10 +8,14 @@ var config = {
 
    host:        '{{ !host }}',
    port:        {{ !port }},
+   usetls:      {{ !usetls }},
+   cleansession:      {{ !cleansession }},
 
    // experiment
 
-   username:    '{{ !username }}',
-   password:    '{{ !password if password else "null" }}',
+   username:    {{ !username if username else "null" }},
+   password:    {{ !password if password else "null" }},
+
+   topic: 	'{{ !topic }}',
 
 };

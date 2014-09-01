@@ -120,8 +120,12 @@ def config_js():
         file. '''
 
     newconf = cf.config('websocket')
-#    for key in newconf:
-#        print key, " = ", type(newconf[key]), " : ",  newconf[key]
+    for key in newconf:
+        if type(newconf[key]) == bool:
+            newconf[key] = 'true' if newconf[key] else 'false';
+        #if type(newconf[key]) == 'NoneType':
+        #    newconf[key] = 'null'
+        print key, " = ", type(newconf[key]), " : ",  newconf[key]
 
     response.content_type = 'text/javascript; charset: UTF-8'
     return template('config-js', newconf)

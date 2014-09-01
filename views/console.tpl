@@ -2,7 +2,7 @@
 
 
     <script src="js/mqttws31.js" type="text/javascript"></script>
-    <script src="console/config.js" type="text/javascript"></script>
+    <script src="config.js" type="text/javascript"></script>
 
     <script type="text/javascript">
     var mqtt;
@@ -10,14 +10,14 @@
 
     function MQTTconnect() {
         mqtt = new Messaging.Client(
-                        host,
-                        port,
+                        config.host,
+                        config.port,
                         "web_" + parseInt(Math.random() * 100,
                         10));
         var options = {
             timeout: 3,
-            useSSL: useTLS,
-            cleanSession: cleansession,
+            useSSL: config.usetls,
+            cleanSession: config.cleansession,
             onSuccess: onConnect,
             onFailure: function (message) {
                 $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
@@ -28,24 +28,24 @@
         mqtt.onConnectionLost = onConnectionLost;
         mqtt.onMessageArrived = onMessageArrived;
 
-        if (username != null) {
-            options.userName = username;
-            options.password = password;
+        if (config.username != null) {
+            options.userName = config.username;
+            options.password = config.password;
         }
-        console.log("Host="+ host + ", port=" + port + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        console.log("Host="+ config.host + ", port=" + config.port + " TLS = " + config.usetls + " username=" + config.username + " password=" + config.password);
         mqtt.connect(options);
     }
 
     function onConnect() {
-        $('#status').val('Connected to ' + host + ':' + port);
+        $('#status').val('Connected to ' + config.host + ':' + config.port);
         // Connection succeeded; subscribe to our topic
-        mqtt.subscribe(topic, {qos: 0});
-        $('#topic').val(topic);
+        mqtt.subscribe(config.topic, {qos: 0});
+        $('#topic').val(config.topic);
     }
 
     function onConnectionLost(response) {
         setTimeout(MQTTconnect, reconnectTimeout);
-        $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+        $('#status').val("connection lost: " + response.errorMessage + ". Reconnecting");
 
     };
 
