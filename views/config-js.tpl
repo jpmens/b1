@@ -8,6 +8,7 @@ var config = {
 
    host:        {{ !host }},
    port:        {{ !port }},
+   reconnect_in:        {{ !reconnect_in }},
    usetls:      {{ !usetls }},
    cleansession:      {{ !cleansession }},
 
@@ -17,6 +18,7 @@ var config = {
    password:    {{ !password if password else "null" }},
 
    topic: 	{{ !topic }},
+   topics: 	{{ !topics }},
    apikey:      {{ !apikey if apikey else "null" }},
 
    // should be obsoleted

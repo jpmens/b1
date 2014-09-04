@@ -4,6 +4,9 @@
 
 all pages:
 	height of page (scrollbar is visible)
+	DONE: create mqttfunc() which subscribes (list of topics must be static to
+	      that function). It gets passed a handler function(topic, payload) which
+	      it invoked to handle incoming messages.
 
 console:
 	DONE: config.js: bring to other config.js' format and consolidate
@@ -22,13 +25,19 @@ tracks:
 	homogenize maps (mapbox, vs. OSM, etc.) with map/
 	CSS, CSS, CSS, CSS!
 
-bubbles:
-	page with bubbles of all vehicles (red/green/yellow); click or hover
-	for details of each
+status/bubbles:
+	DONE: page with bubbles of all vehicles (red/green/yellow) start in blue.
+	click or hover for details of each
+	status = 0: start by making light red; the longer the GW is on status 0,
+	the darker the red gets.
 
 tools:
 	add manual note to a vehicle (e.g. is in repair); show in table
+	display TID -> IMEI, reboot, sw versions in table
 	geofence table / editor
+
+backend:
+	collect /start info (IMEI, reboot time, sw version) for all GW.
 	
 
 

@@ -1,98 +1,58 @@
-% include('tbstop.tpl', page='status', page_title='OwnTracks Console')
+% include('tbstop.tpl', page='status', page_title='OwnTracks Status')
 
 
     <script src="js/mqttws31.js" type="text/javascript"></script>
     <script src="config.js" type="text/javascript"></script>
+    <script src="all/mqtt.js" type="text/javascript"></script>
 
-	<style>
-	.boxgreen {
-		color: white;
-		background-color: green;
-		width: 4%;
-		text-align: center;
-		margin: 4px;
+    <style>
+	.fixed-size-square {
+	    float: left;
+	    margin: 4px;
+	    display: table;
+	    width: 50px;
+	    height: 50px;
+	    background: #4679BD;
 	}
-	.boxred {
-		color: white;
-		background-color: red;
-		width: 4%;
-		text-align: center;
-		margin: 4px;
+	.fixed-size-square span {
+	    display: table-cell;
+	    text-align: center;
+	    vertical-align: middle;
+	    // color: white
 	}
-	.boxyellow {
+	.blue {
+		background: blue;
+		color: white;
+	}
+	.green {
+		background: green;
+		color: white;
+	}
+	.red {
+		background: red;
+		color: white;
+	}
+	.yellow {
+		background: yellow;
 		color: black;
-		background-color: yellow;
-		width: 4%;
-		text-align: center;
-		margin: 4px;
 	}
+    </style>
 
-	input[type="text"]:disabled {
-		color: white;
-		background-color: yellow;
-	}
-	</style>
-
-	<div id='matrix'>
-	</div>
+    <div id='matrix'></div>
 
     <script type="text/javascript">
-    var mqtt;
-    var reconnectTimeout = 2000;
 
     function endsWith(str, suffix) {
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
     }
 
-    function MQTTconnect() {
-        mqtt = new Messaging.Client(
-                        config.host,
-                        config.port,
-                        "web_" + parseInt(Math.random() * 100,
-                        10));
-        var options = {
-            timeout: 3,
-            useSSL: config.usetls,
-            cleanSession: config.cleansession,
-            onSuccess: onConnect,
-            onFailure: function (message) {
-                console.log("Connection failed: " + message.errorMessage + "Retrying");
-                setTimeout(MQTTconnect, reconnectTimeout);
-            }
-        };
-
-        mqtt.onConnectionLost = onConnectionLost;
-        mqtt.onMessageArrived = onMessageArrived;
-
-        if (config.username != null) {
-            options.userName = config.username;
-            options.password = config.password;
-        }
-        console.log("Host="+ config.host + ", port=" + config.port + " TLS = " + config.usetls + " username=" + config.username + " password=" + config.password);
-        mqtt.connect(options);
+    function errorfunc(status, reason) {
+    	console.log("STATUS: " + status + "; " + reason);
     }
 
-    function onConnect() {
-        $('#status').val('Connected to ' + config.host + ':' + config.port);
-        // Connection succeeded; subscribe to our topic
-        mqtt.subscribe(config.topic, {qos: 0});
-        mqtt.subscribe(config.topic + "/status", {qos: 0});
-    }
 
-    function onConnectionLost(response) {
-        setTimeout(MQTTconnect, reconnectTimeout);
-        console.log("connection lost: " + response.errorMessage + ". Reconnecting");
-
-    };
-
-    function onMessageArrived(message) {
-
-        var topic = message.destinationName;
-        var payload = message.payloadString;
-
+    function handlerfunc(topic, payload) {
 	var matrix = $("#matrix");
-
-	console.log(topic + " " + payload);
 
 	var d;
 	try {
@@ -103,8 +63,16 @@
 			var box = $('#' + id);
 
 			if (box.length == 0) {
-				var field = '<input type="text" class="boxgreen" id="' + id + '" value="' + tid + '" readonly />';
+				// TODO: I can put small text in the inside div (within span)
+				var field = '<div id="' + id + '" tid="' + tid + '" class="fixed-size-square blue">\
+						    <span>' + tid + '<div></div></span>\
+						</div>';
 				$(matrix).append(field);
+				box = $('#' + id);
+				$(box).click(function(){
+					// console.log("focus=" +  $(this).val() );
+					console.log( $(this).attr('id') + " (" + $(this).attr('tid') + ")" );
+				});
 			}
 			return;
 		}
@@ -115,22 +83,22 @@
 
 	if (endsWith(topic, "/status")) {
 		var tarr = topic.split('/');
-		var newtopic = "";
+		var realtopic = ""; // i.e. topic corresponding to the /status we got
 		for (var n = 0; n < tarr.length - 1; n++) {
-			newtopic = newtopic + tarr[n] + ((n < (tarr.length - 2)) ? "/" : "");
+			realtopic = realtopic + tarr[n] + ((n < (tarr.length - 2)) ? "/" : "");
 		}
-		console.log("Got status " + payload + " for " + newtopic);
+		console.log("Got status " + payload + " for " + realtopic);
 
-		var id = newtopic.replace(/\//g, '-');
+		var id = realtopic.replace(/\//g, '-');
 		var box = $('#' + id);
 		var s = payload;
 
-		if (s == 0) {
-			classname = 'boxgreen';
-		} else if (s == 1) {
-			classname = 'boxred';
+		if (s == 1) {
+			classname = 'fixed-size-square green';
+		} else if (s == 0) {
+			classname = 'fixed-size-square red';
 		} else {
-			classname = 'boxyellow';
+			classname = 'fixed-size-square yellow';
 		}
 
 		if (box.length == 1) {
@@ -140,17 +108,21 @@
 		return;
 	}
 
-
-
-	$('input:text').focus(function(){
-		console.log( $(this).val() );
-	});
-
     };
 
 
     $(document).ready(function() {
-        MQTTconnect();
+
+    	var tlist = config.topics;
+	var sub = [];
+
+	for (var n = 0; n < tlist.length; n++) {
+		sub.push(tlist[n]);
+		sub.push(tlist[n] + '/status');
+	}
+	mqtt_setup(sub, handlerfunc, errorfunc);
+        mqtt_connect();
+
     });
 
     </script>
