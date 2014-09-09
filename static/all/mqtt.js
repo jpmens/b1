@@ -32,7 +32,7 @@ function mqtt_connect()
 	mqtt.onConnectionLost = function (responseObject) {
 		setTimeout(mqtt_connect, reconnectTimeout);
 		console.log(responseObject.errorMessage);
-		mqtt_setup.errorfunc("Connection lost", message.errorMessage);
+		mqtt_setup.errorfunc("Connection lost", responseObject.errorMessage);
 	};
 
 	mqtt.onMessageArrived = function (message) {

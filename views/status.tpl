@@ -10,9 +10,10 @@
 	    float: left;
 	    margin: 4px;
 	    display: table;
-	    width: 50px;
-	    height: 50px;
+	    width: 36px;
+	    height: 36px;
 	    background: #4679BD;
+	    border: 1px solid #696969;
 	}
 	.fixed-size-square span {
 	    display: table-cell;

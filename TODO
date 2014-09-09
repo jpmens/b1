@@ -24,6 +24,7 @@ table:
 tracks:
 	homogenize maps (mapbox, vs. OSM, etc.) with map/
 	CSS, CSS, CSS, CSS!
+	Localtime on points
 
 status/bubbles:
 	DONE: page with bubbles of all vehicles (red/green/yellow) start in blue.
