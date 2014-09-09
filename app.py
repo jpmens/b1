@@ -41,6 +41,19 @@ def db_reconnect():
     except Exception, e:
         logging.info("Cannot connect to database: %s" % (str(e)))
 
+def track_length(track):
+    ''' Run through the track, calculate distance in kilometers
+        and return that. '''
+
+    kilometers = 0.0
+    n = 1
+    for tp in track[0:-1]:
+        distance = haversine(tp['lon'], tp['lat'], track[n]['lon'], track[n]['lat'])
+        kilometers += distance
+        n += 1
+
+    return kilometers
+
 def getDBdata(username, device, from_date, to_date, spacing):
 
     track = []
@@ -214,14 +227,7 @@ def get_download():
     
     track = getDBdata(username, device, from_date, to_date, None)
 
-    # Let's run through this data to get a total trip distance in km.
-
-    kilometers = 0.0
-    n = 1
-    for tp in track[0:-1]:
-        distance = haversine(tp['lon'], tp['lat'], track[n]['lon'], track[n]['lat'])
-        kilometers += distance
-        n += 1
+    kilometers = track_length(track)
 
     sio = StringIO()
     s = codecs.getwriter('utf8')(sio)
@@ -336,12 +342,13 @@ def get_geoJSON():
                     'coordinates' : []
                   },
             'properties' : {
-                    'description' : "an OwnTracks track",
+                    'description' : "an OwnTracks track",  # updated below
                   },
     }
 
     pointlist = []
     track_coords = []
+    kilometers = track_length(track)
 
     for tp in track:
 
@@ -379,6 +386,7 @@ def get_geoJSON():
 
 
     geo['geometry']['coordinates'] = track_coords
+    geo['properties']['description'] = "Track length: %.2f km" % kilometers
 
     collection['features'] = [ geo ]
     for p in pointlist:
