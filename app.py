@@ -22,7 +22,7 @@ from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree as ET
 from ElementTree_pretty import prettify
 from cf import conf
-from dbschema import Location, fn, sql_db
+from dbschema import Location, Waypoint, fn, sql_db
 
 cf = conf(os.getenv('WAPPCONFIG', 'wapp.conf'))
 
@@ -92,6 +92,45 @@ def getDBdata(username, device, from_date, to_date, spacing):
         track.append(tp)
 
     return track
+
+def getDBwaypoints(username, device, lat_min, lat_max, lon_min, lon_max):
+
+    waypoints = []
+
+    print lat_min, lat_max, lon_min, lon_max
+
+    lat_min = float(lat_min)
+    lat_max = float(lat_max)
+    lon_min = float(lon_min)
+    lon_max = float(lon_max)
+
+    db_reconnect()
+    query = Waypoint.select().where(
+                # FIXME (Waypoint.username == username) &
+                # FIXME (Waypoint.device == device) &
+                    (Waypoint.lat >= lat_min) &
+                    (Waypoint.lat <= lat_max) &
+                    (Waypoint.lon >= lon_min) &
+                    (Waypoint.lon <= lon_max)
+                )
+    print query.sql()
+
+    for w in query:
+
+        if w.rad is None:
+            continue
+
+        wp = {
+            'lat'  : float(w.lat),
+            'lon'  : float(w.lon),
+            'name' : w.waypoint,
+            'rad'  : w.rad,
+        }
+        print wp
+        waypoints.append(wp)
+
+    return waypoints
+
 
 @app.hook('config')
 def on_config_change(key, new_val):
@@ -224,7 +263,7 @@ def get_download():
 
     username, device = userdev.split('|')
     trackname = 'owntracks-%s-%s-%s-%s' % (username, device, from_date, to_date)
-    
+
     track = getDBdata(username, device, from_date, to_date, None)
 
     kilometers = track_length(track)
@@ -350,14 +389,30 @@ def get_geoJSON():
     track_coords = []
     kilometers = track_length(track)
 
+    # bounding box
+    lat_min = 180
+    lat_max = -180
+    lon_min = 90
+    lon_max = -90
+
     for tp in track:
 
         lat = tp['lat']
         lon = tp['lon']
         tst = tp['tst']
 
+        if lat > lat_max:
+            lat_max = lat
+        if lat < lat_min:
+            lat_min = lat
+        if lon > lon_max:
+            lon_max = lon
+        if lon < lon_min:
+            lon_min = lon
+
+
         description = str(tst)
-        
+
         if tp.get('weather') is not None:
             description = description + " %s" % tp.get('weather')
         if tp.get('revgeo') is not None:
@@ -391,6 +446,26 @@ def get_geoJSON():
     collection['features'] = [ geo ]
     for p in pointlist:
         collection['features'].append(p)
+
+    # Experiment: geofences
+    fences = []
+
+    for f in getDBwaypoints(username, device, lat_min, lat_max, lon_min, lon_max):
+        fence = {
+                    'type'  : 'Feature',
+                    'geometry' : {
+                        'type'  : "Point",
+                        'coordinates' : [f['lon'], f['lat']],
+                    },
+                    'properties' : {
+                        'description' : f['name'],
+                        'geofence': {
+                            'radius' : f['rad'],
+                        },
+                    }
+            }
+        collection['features'].append(fence)
+
 
     return collection
 

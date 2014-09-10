@@ -30,7 +30,12 @@
 	     </div>
 
 	<div>
-	    Point every KM: 
+	  <p class='description'>
+	  Select a user/device, and a date or a range of dates. Then
+	  click one of the options below to show on map or download
+	  the data.
+	  </p>
+	    Mark every KM:
 	    <select id='spacing'>
 		<option>2</option>
 		<option>5</option>
@@ -52,9 +57,9 @@
 
 
 	    <div><a href='#' id='getmap'>Show on map</a></div>
-	    <div><a href='#' fmt='txt' class='download'>TXT</a></div>
-	    <div><a href='#' fmt='csv' class='download'>CSV</a></div>
-	    <div><a href='#' fmt='gpx' class='download'>GPX</a></div>
+	    <div>download <a href='#' fmt='txt' class='download'>TXT</a></div>
+	    <div>download <a href='#' fmt='csv' class='download'>CSV</a></div>
+	    <div>download <a href='#' fmt='gpx' class='download'>GPX</a></div>
 
 	</div> <!-- end navbar -->
 
@@ -126,7 +131,15 @@
 	});
 
 	function onEachFeature(feature, layer) {
-		if (feature.properties) {
+		if (feature.properties.geofence) {
+			// non-standard GeoJSON
+			console.log("onEachFeature " + JSON.stringify(feature.properties.geofence));
+			var radius = feature.properties.geofence.radius;
+			console.log("RAD=" + radius);
+
+		}
+
+		if (feature.properties.description) {
 			layer.bindPopup(feature.properties.description);
 		}
 	}
@@ -182,13 +195,28 @@
 				    fillOpacity: 0.8
 				};
 
+				var fenceMarkerOpts = {
+					radius: 2,
+					fillColor: 'blue',
+					stroke: false,
+				};
+
 				if (geojson) {
 					map.removeLayer(geojson);
 				}
 				geojson = L.geoJson(route, {
 					style: myStyle,
 					pointToLayer: function(feature, latlng) {
-						return L.circleMarker(latlng, geojsonMarkerOptions);
+						console.log(JSON.stringify(feature.properties));
+
+						/* Smuggling geo-fences in with properties */
+						if (feature.properties.geofence) {
+							var radius = feature.properties.geofence.radius;
+							L.circle([latlng.lat, latlng.lng], radius).addTo(map);
+							return L.circleMarker(latlng, fenceMarkerOpts);
+						} else {
+							return L.circleMarker(latlng, geojsonMarkerOptions);
+						}
 					},
 					onEachFeature: onEachFeature
 				}).addTo(map);
