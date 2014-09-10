@@ -33,33 +33,38 @@ class Location(OwntracksModel):
     topic           = BlobField(null=False)
     username        = CharField(null=False)
     device          = CharField(null=False)
-    lat             = CharField(null=False)
-    lon             = CharField(null=False)
+    tid             = CharField(null=False, max_length=2)
+    lat             = DecimalField(null=False, max_digits=10, decimal_places=7)
+    lon             = DecimalField(null=False, max_digits=10, decimal_places=7)
     tst             = DateTimeField(default=datetime.datetime.now, index=True)
-    acc             = CharField(null=True)
-    batt            = CharField(null=True)
+    acc             = DecimalField(null=False, max_digits=6, decimal_places=1)
+    batt            = DecimalField(null=False, max_digits=3, decimal_places=1)
     waypoint        = TextField(null=True)  # desc in JSON, but desc is reserved SQL word
     event           = CharField(null=True)
+    vel             = DecimalField(max_digits=4, decimal_places=1)
+    cog             = DecimalField(max_digits=3, decimal_places=0)
+    trip            = IntegerField(null=True)
+    dist            = IntegerField(null=True)
     # optional: full JSON of item including all data from plugins
     json            = TextField(null=True)
-    # the following fields must be correlated to settings.py (plugin columns)
-    weather         = CharField(null=True)
-    revgeo          = CharField(null=True)
 
     class Meta:
         indexes = (
             # Create non-unique on username, device
             (('username', 'device'), False),
+
+            # Create non-unique on tid
+            (('tid'), False),
         )
 
 class Waypoint(OwntracksModel):
     topic           = BlobField(null=False)
     username        = CharField(null=False)
     device          = CharField(null=False)
-    lat             = DecimalField(null=False, max_digits=11, decimal_places=8)
-    lon             = DecimalField(null=False, max_digits=11, decimal_places=8)
+    lat             = DecimalField(null=False, max_digits=10, decimal_places=7)
+    lon             = DecimalField(null=False, max_digits=10, decimal_places=7)
     tst             = DateTimeField(default=datetime.datetime.now)
-    rad             = CharField(null=True)
+    rad             = IntegerField(null=True)
     waypoint        = CharField(null=True)
 
     class Meta:
