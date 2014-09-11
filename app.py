@@ -75,8 +75,6 @@ def getDBdata(username, device, from_date, to_date, spacing):
         lat     = float(l.lat)
         lon     = float(l.lon)
         dt      = l.tst
-        weather = l.weather
-        revgeo  = l.revgeo
 
         # FIXME: add vel, cog from json
         # FIXME: add distance haversine to previous point
@@ -85,8 +83,8 @@ def getDBdata(username, device, from_date, to_date, spacing):
             'lat' : float(l.lat),
             'lon' : float(l.lon),
             'tst' : l.tst,
-            'weather' : l.weather,
-            'revgeo'  : l.revgeo,
+            # 'weather' : l.weather,
+            # 'revgeo'  : l.revgeo,
         }
 
         track.append(tp)
@@ -468,6 +466,15 @@ def get_geoJSON():
 
 
     return collection
+
+@app.route('/api/onevehicle/<tid>', method='GET')
+def onevehicle(tid):
+
+    text = "<h2>FIF</h2>bla\nHello\nfrom\nbottle for (%s). Thanks!" % tid
+
+    response.content_type = 'text/plain; charset: UTF-8'
+    return text
+
 
 @app.route('/<filename:re:.*\.js>')
 def javascripts(filename):

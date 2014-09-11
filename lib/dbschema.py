@@ -45,6 +45,7 @@ class Location(OwntracksModel):
     cog             = DecimalField(max_digits=3, decimal_places=0)
     trip            = IntegerField(null=True)
     dist            = IntegerField(null=True)
+    t               = CharField(null=False, max_length=1)
     # optional: full JSON of item including all data from plugins
     json            = TextField(null=True)
 
@@ -74,9 +75,10 @@ class Waypoint(OwntracksModel):
         )
 
 class Geo(OwntracksModel):
-    lat             = CharField(null=False)
-    lon             = CharField(null=False)
-    rev             = CharField(null=True)
+    # warning: shorter fields for lat, lon
+    lat             = DecimalField(null=False, max_digits=6, decimal_places=3)
+    lon             = DecimalField(null=False, max_digits=6, decimal_places=3)
+    rev             = CharField(null=False)
 
     class Meta:
         indexes = (

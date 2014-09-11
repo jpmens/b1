@@ -9,11 +9,13 @@ ALTER TABLE waypoint MODIFY rad INTEGER NOT NULL;
 
 CREATE INDEX lll ON location (lat, lon);
 CREATE INDEX loc_u_d ON location (username, device); -- maybe not if use TID?
-CREATE INDEX loc_tid ON location (tid); -- maybe not if use TID?
 
 ALTER TABLE location ADD tid VARCHAR(2);
 UPDATE location SET tid = UCASE(RIGHT(CONVERT(topic USING utf8), 2));
 ALTER TABLE location MODIFY tid VARCHAR(2) NOT NULL;
+CREATE INDEX loc_tid ON location (tid); -- maybe not if use TID?
+
+ALTER TABLE location ADD t VARCHAR(1);
 
 ALTER TABLE location MODIFY batt DECIMAL(3,1) NOT NULL;
 ALTER TABLE location MODIFY acc DECIMAL(6,1) NOT NULL;

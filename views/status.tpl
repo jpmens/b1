@@ -37,7 +37,41 @@
 		background: yellow;
 		color: black;
 	}
+	.hcard {
+	    color: #FFF;
+	    clear: both;
+	    float: none;
+	    width: 400px;
+	    background: #000;
+	    padding: 10px;
+	    font: 11px Arial, Helvetica, sans-serif;
+	    -moz-border-radius: 5px;
+	    border-radius: 5px;
+	    -webkit-border-radius: 5px;
+	    position: absolute;
+	    top: 110px;
+	    border: 2px solid #999;
+	    display: none;
+	}
+	.hcard pre {
+	    color: #FFF;
+	    background: #000;
+	    text-align: left;
+	    -moz-border-radius: 0;
+	    border-radius: 0;
+	    -webkit-border-radius: 0;
+	    border: 0;
+	    font: 11px Courier, Arial, Helvetica, sans-serif;
+	    
+
+	}
+
     </style>
+
+
+    <div id="hiddenDiv" class="hcard">
+      <pre id='servertext'></pre>
+	    </div>
 
     <div id='matrix'></div>
 
@@ -65,14 +99,34 @@
 
 			if (box.length == 0) {
 				// TODO: I can put small text in the inside div (within span)
-				var field = '<div id="' + id + '" tid="' + tid + '" class="fixed-size-square blue">\
+				var field = '<div id="' + id + '" tid="' + tid + '" class="fixed-size-square blue" data-tid="' + tid + '">\
 						    <span>' + tid + '<div></div></span>\
 						</div>';
+				console.log(field);
 				$(matrix).append(field);
+
 				box = $('#' + id);
-				$(box).click(function(){
-					// console.log("focus=" +  $(this).val() );
+				$(box).on('click mouseenter', function(){
+					var tid = $(this).attr('tid');
 					console.log( $(this).attr('id') + " (" + $(this).attr('tid') + ")" );
+
+					var text = "not there";
+
+					$.ajax({
+						url: 'api/onevehicle/' + tid,
+						type: 'GET',
+						async: false,
+						dataType: 'text',
+						success: function(data) {
+							text = data;
+						},
+					});
+
+				        $('div:hidden #servertext').text(text);
+					$('#hiddenDiv').show();
+				});
+				$(box).on('mouseleave', function(){
+					$('#hiddenDiv').hide();
 				});
 			}
 			return;
@@ -84,6 +138,7 @@
 
 	if (endsWith(topic, "/status")) {
 		var tarr = topic.split('/');
+		var classname;
 		var realtopic = ""; // i.e. topic corresponding to the /status we got
 		for (var n = 0; n < tarr.length - 1; n++) {
 			realtopic = realtopic + tarr[n] + ((n < (tarr.length - 2)) ? "/" : "");
@@ -95,11 +150,11 @@
 		var s = payload;
 
 		if (s == 1) {
-			classname = 'fixed-size-square green';
+			classname = 'fixed-size-square green hovr';
 		} else if (s == 0) {
-			classname = 'fixed-size-square red';
+			classname = 'fixed-size-square red hovr';
 		} else {
-			classname = 'fixed-size-square yellow';
+			classname = 'fixed-size-square yellow hovr';
 		}
 
 		if (box.length == 1) {
