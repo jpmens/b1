@@ -23,6 +23,7 @@ from xml.etree import ElementTree as ET
 from ElementTree_pretty import prettify
 from cf import conf
 from dbschema import Location, Waypoint, fn, sql_db
+from persist import PersistentDict
 
 cf = conf(os.getenv('WAPPCONFIG', 'wapp.conf'))
 
@@ -158,6 +159,10 @@ def page_console():
 def page_map():
     return template('map')
 
+@app.route('/hw')
+def page_console():
+    return template('hw')
+
 @app.route('/status')
 def page_console():
     return template('status')
@@ -241,6 +246,31 @@ def users():
         userlist.append(user)
 
     return dict(userlist=userlist)
+
+@app.route("/api/flotbatt/<voltage>", method="GET")
+def flotbatt(voltage):
+
+    flot = {
+        'label' : 'Batt',
+    }
+
+    sdict = PersistentDict('p/status.json', 'r', format='json')  #FIXME: configurable path
+
+    data = []
+
+    for dev in sdict:
+        level = 0
+        try:
+            level = sdict[dev]['ext'][0]
+        except:
+            pass
+        data.append([ sdict[dev]['tid'], level ])
+
+    flot['data'] = data
+
+    return flot
+
+
 
 # ?userdev=alx%7Cy300&fromdate=2014-08-19&todate=2014-08-20&format=tx
 @app.route('/api/download', method='GET')
@@ -470,10 +500,13 @@ def get_geoJSON():
 @app.route('/api/onevehicle/<tid>', method='GET')
 def onevehicle(tid):
 
-    text = "<h2>FIF</h2>bla\nHello\nfrom\nbottle for (%s). Thanks!" % tid
+    params = {
+        'tid' : tid,
+    }
+
 
     response.content_type = 'text/plain; charset: UTF-8'
-    return text
+    return template('onevehicle', params)
 
 
 @app.route('/<filename:re:.*\.js>')

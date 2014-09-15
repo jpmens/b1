@@ -66,7 +66,7 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="#">Default</a></li>
-            <li class="{{ "active" if page == "YYYYY" else "xxxx" }}" ><a href="#">Static top</a></li>
+            <li class="{{ "active" if page == "hw" else "xxxx" }}" ><a href="hw">Hardware</a></li>
             <li ><a href="#">Fixed top</a></li>
           </ul>
         </div><!--/.nav-collapse -->

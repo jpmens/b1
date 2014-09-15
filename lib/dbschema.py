@@ -41,8 +41,8 @@ class Location(OwntracksModel):
     batt            = DecimalField(null=False, max_digits=3, decimal_places=1)
     waypoint        = TextField(null=True)  # desc in JSON, but desc is reserved SQL word
     event           = CharField(null=True)
-    vel             = DecimalField(max_digits=4, decimal_places=1)
-    cog             = DecimalField(max_digits=3, decimal_places=0)
+    vel             = IntegerField(null=True)
+    cog             = IntegerField(null=True)
     trip            = IntegerField(null=True)
     dist            = IntegerField(null=True)
     t               = CharField(null=False, max_length=1)
@@ -82,9 +82,22 @@ class Geo(OwntracksModel):
 
     class Meta:
         indexes = (
-            # Create a unique index on tst
+            # Create a unique index on lat,lon
             (('lat', 'lon', ), True),
         )
+
+#class Status(OwntracksModel):
+#    KEY tid             = CharField(null=False, max_length=2)
+#    l_id        location.id
+#    g_id        geo.id
+#    tstamp          = DateTimeField(default=datetime.datetime.now, index=True)
+#    status          = IntegerField(null=True)   # 0, 1, -1
+#
+#    class Meta:
+#        indexes = (
+#            # Create a unique index on tst
+#            # FIXME:    ----------- (('lat', 'lon', ), True),
+#        )
 
 if __name__ == '__main__':
     sql_db.connect()
@@ -101,5 +114,10 @@ if __name__ == '__main__':
 
     try:
         Geo.create_table(fail_silently=True)
+    except Exception, e:
+        print str(e)
+
+    try:
+        Status.create_table(fail_silently=True)
     except Exception, e:
         print str(e)
